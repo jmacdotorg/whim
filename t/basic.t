@@ -7,7 +7,7 @@ use FindBin;
 use Web::Mention;
 use Path::Tiny;
 
-use lib "$FindBin::Bin/../";
+use lib "$FindBin::Bin/../lib";
 use_ok( "Brisote" );
 
 initialize_tests();
