@@ -14,6 +14,8 @@ use DateTime::Format::ISO8601;
 use Mojo::UserAgent;
 use Digest::SHA qw(sha256_hex);
 
+use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
+
 use Web::Mention;
 
 has 'data_directory' => (
@@ -129,7 +131,7 @@ sub fetch_webmentions( $self, $args ) {
 
     my @wms;
     while ( my $row = $sth->fetchrow_hashref ) {
-        push @wms, Web::Mention->new( {
+        my %args = (
             source => URI->new($row->{source}),
             target => URI->new($row->{target}),
             source_html => $row->{html},
@@ -138,10 +140,14 @@ sub fetch_webmentions( $self, $args ) {
             time_received =>
                 DateTime::Format::ISO8601
                     ->parse_datetime($row->{time_received}),
-            time_verified =>
+            time_verified => $row->{time_validated}?
                 DateTime::Format::ISO8601
-                    ->parse_datetime($row->{time_validated}),
-        } );
+                    ->parse_datetime($row->{time_validated}) : undef,
+        );
+        foreach (qw(time_verified is_verified)) {
+            delete $args{$_} unless defined $args{$_};
+        }
+        push @wms, Web::Mention->new( \%args );
     }
 
     return @wms;
@@ -191,16 +197,41 @@ sub process_webmentions( $self, $fetch_options ) {
         }
         else {
             print ".";
+            warn "FAILED to verify s:" . $wm->source->as_string . "t: " . $wm->target->as_string;
             $sth->execute( 0, @bind_values );
         }
     }
     return $verified_count;
 }
 
+# Receive_webmention: Treat the given wm as just-received, untested, unverified.
+#                     Store its minimal info in the database. The expectation
+#                     is that we'll process it later (see process_webmentions).
+sub receive_webmention( $self, $wm ) {
+    $self->dbh->do(
+        'insert into wm '
+        . '(source, target, time_received, is_tested ) '
+        . 'values (?, ?, ?, ? )',
+        {},
+        $wm->source->as_string,
+        $wm->target->as_string,
+        $wm->time_received->iso8601,
+        0,
+        0,
+    );
+}
+
 sub _build_dbh( $self ) {
     my $dir = $self->data_directory;
+
+    my $db_file = $dir->child( 'wm.db' );
+    my $db_file_already_existed = 1 if -e $db_file;
+
     my $dbh = DBI->connect("dbi:SQLite:dbname=$dir/wm.db","","");
     if ( $dbh ) {
+        unless ($db_file_already_existed) {
+            _initialize_database( $dbh );
+        }
         return $dbh;
     }
     else {
@@ -222,5 +253,15 @@ sub _process_author_photo_tx( $self, $tx ) {
     return $photo_hash;
 }
 
+sub _initialize_database( $dbh ) {
+    my @statements = (
+        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, time_validated text, type char(16), author_name char(64), author_url char(128), author_photo char(128))",
+        "CREATE TABLE block (source char(128))",
+    );
+
+    foreach (@statements) {
+        $dbh->do($_);
+    }
+}
 
 1;
