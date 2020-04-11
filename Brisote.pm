@@ -154,7 +154,8 @@ sub fetch_webmentions( $self, $args ) {
 
 }
 
-sub process_webmentions( $self, $fetch_options ) {
+# process_webmentions: Verify all untested WMs.
+sub process_webmentions( $self ) {
     my $verified_count = 0;
     my $sth = $self->dbh->prepare(
         'update wm set is_tested = 1, is_verified = ?, '
@@ -163,7 +164,7 @@ sub process_webmentions( $self, $fetch_options ) {
         . 'where source = ? and target = ? and time_received = ?'
     );
 
-    for my $wm ( $self->fetch_webmentions( $fetch_options ) ) {
+    for my $wm ( $self->fetch_webmentions( {process => 1} ) ) {
         # Grab the author image
         my $photo_hash;
         if ( $wm->author && $wm->author->photo ) {

@@ -42,7 +42,7 @@ is( $count, 7, 'Received WMs are in the database.' );
 
 {
 diag("Webmention verification");
-my $count = $brisote->process_webmentions( {process => 1} );
+my $count = $brisote->process_webmentions;
 is ($count, 7, "Processed expected number of stored webmentions.");
 }
 

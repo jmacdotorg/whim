@@ -65,7 +65,7 @@ if ( $options{ count } ) {
 elsif ( $options{ process } ) {
     if ( @wms ) {
         say "Verifying " . scalar @wms . " webmentions...";
-        my $verified_count = $brisote->process_webmentions( \%options );
+        my $verified_count = $brisote->process_webmentions;
         my $s = $verified_count == 1? '' : 's';
         say "\n$verified_count webmention${s} passed verification.";
     }
