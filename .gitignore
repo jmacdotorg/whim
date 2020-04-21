@@ -1,2 +1,2 @@
 data
-test/run/*
+t/run/*
