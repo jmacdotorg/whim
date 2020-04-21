@@ -124,9 +124,6 @@ sub fetch_webmentions( $self, $args ) {
 
     $query .= "$where_clause order by time_received";
 
-    warn "QUERY: $query\n";
-    warn "BIND ARGS: @bind_args\n";
-
     my $sth = $self->dbh->prepare( $query );
     $sth->execute( @bind_args );
 
@@ -194,11 +191,9 @@ sub process_webmentions( $self ) {
 
         if ($wm->is_verified) {
             $verified_count++;
-            print "+";
             $sth->execute( 1, @bind_values );
         }
         else {
-            print ".";
             warn "FAILED to verify s:" . $wm->source->as_string . "t: " . $wm->target->as_string;
             $sth->execute( 0, @bind_values );
         }
