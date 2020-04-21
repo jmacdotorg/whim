@@ -1,0 +1,95 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+
+use FindBin;
+use lib
+    "$FindBin::Bin/../lib",
+;
+
+# XXX Dunno the expected way to daemonize mojo scripts,
+#     or SSL cert/key handling. (keeping some SSL confif code from Plerd.)
+
+use Mojolicious::Lite;
+use Getopt::Long;
+use Try::Tiny;
+
+use Brisote;
+
+use Readonly;
+Readonly my $OK          => 200;
+Readonly my $ACCEPTED    => 202;
+Readonly my $BAD_REQUEST => 400;
+
+my $webmention_enabled = 0;
+my $webmention_port  = 0;
+my $config_file;
+my $ssl_cert;
+my $ssl_key;
+GetOptions(
+    'config=s'              => \$config_file,
+    'ssl-cert=s'            => \$ssl_cert,
+    'ssl-key=s'             => \$ssl_key,
+);
+
+if ($ssl_cert || $ssl_key) {
+    unless ( $ssl_cert && $ssl_key ) {
+        die "Can't start $0: You must define both ssl-cert and ssl-key, "
+            . "if you define either of them.\n";
+    }
+    unless (-r $ssl_cert) {
+        die "Can't start $0: No readable ssl-cert file at $ssl_cert.\n";
+    }
+    unless (-r $ssl_key) {
+        die "Can't start $0: No readable ssl-key file at $ssl_key.\n";
+    }
+}
+
+my $webserver_pid;
+$SIG{TERM} = \&handle_term_signal;
+
+$ENV{MOJO_MODE} ||= 'production';
+
+my $brisote = Brisote->new( { data_directory=>"$FindBin::Bin/../data" } );
+
+post '/' => sub {
+    my $c = shift;
+
+    my $webmention;
+    try {
+        $webmention = Web::Mention->new_from_request ( $c );
+    }
+    catch {
+        $c->render( status => $BAD_REQUEST, text => "Malformed webmention: $_" );
+    };
+    return unless $webmention;
+
+    # XXX For the present, naively accept all webmentions.
+    #     This is technically legal under section 3.2.1 of the spec.
+    #     But it SHOULD check against some stored config about whether
+    #     it cares about the target URL at all.
+    unless ( 1 ) {
+        $c->render( status => $BAD_REQUEST, text => "Unrecognized target URL." );
+        return;
+    }
+
+    my $success_text = "Webmention accepted, and queued for verification and "
+                     . "processing. Thank you!";
+
+    my $return_link_url = $c->param( 'target' );
+    my $return_link_text = 'Return to previous page.';
+    $success_text .= qq{ <a href="$return_link_url">$return_link_text</a>};
+
+    $c->render( status => $ACCEPTED, text => $success_text );
+
+    $brisote->receive_webmention( $webmention );
+};
+
+get '/' => sub {
+    my $c = shift;
+
+    $c->render( status => $OK, text => 'OK (listening for webmentions)' );
+};
+
+app->start;
