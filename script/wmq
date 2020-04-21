@@ -27,7 +27,7 @@ massage_options();
 
 use Brisote;
 
-my $brisote = Brisote->new( { data_directory=>"$FindBin::Bin/data" } );
+my $brisote = Brisote->new( { data_directory=>"$FindBin::Bin/../data" } );
 
 if ($options{unblock}) {
     my @failures = $brisote->unblock_sources( $options{unblock}->@* );
