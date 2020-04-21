@@ -3,8 +3,6 @@ package Brisote;
 use warnings;
 use strict;
 use v5.20;
-use feature 'signatures';
-no warnings qw(experimental::signatures);
 
 use Moo;
 use DBI;
@@ -43,6 +41,9 @@ has 'ua' => (
 
 use Readonly;
 Readonly my $IMAGEDIR_NAME => 'images';
+
+no warnings "experimental::signatures";
+use feature "signatures";
 
 sub unblock_sources( $self, @sources ) {
     my @failures;
