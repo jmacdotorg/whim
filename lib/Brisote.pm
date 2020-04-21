@@ -138,9 +138,9 @@ sub fetch_webmentions( $self, $args ) {
             time_received =>
                 DateTime::Format::ISO8601
                     ->parse_datetime($row->{time_received}),
-            time_verified => $row->{time_validated}?
+            time_verified => $row->{time_verified}?
                 DateTime::Format::ISO8601
-                    ->parse_datetime($row->{time_validated}) : undef,
+                    ->parse_datetime($row->{time_verified}) : undef,
         );
         foreach (qw(time_verified is_verified)) {
             delete $args{$_} unless defined $args{$_};
@@ -158,7 +158,7 @@ sub process_webmentions( $self ) {
     my $sth = $self->dbh->prepare(
         'update wm set is_tested = 1, is_verified = ?, '
         . 'author_name = ?, author_url = ?, author_photo = ?, '
-        . 'time_validated = ?, html = ? '
+        . 'time_verified = ?, html = ? '
         . 'where source = ? and target = ? and time_received = ?'
     );
 
@@ -252,7 +252,7 @@ sub _process_author_photo_tx( $self, $tx ) {
 
 sub _initialize_database( $dbh ) {
     my @statements = (
-        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, time_validated text, type char(16), author_name char(64), author_url char(128), author_photo char(128))",
+        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128))",
         "CREATE TABLE block (source char(128))",
     );
 
