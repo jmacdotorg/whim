@@ -1,4 +1,5 @@
 requires "DBI";
+requires "DBD::SQLite";
 requires "DateTime::Format::ISO8601";
 requires "Digest::SHA";
 requires "FindBin";
