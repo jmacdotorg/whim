@@ -14,4 +14,5 @@ requires "Web::Mention";
 requires "feature";
 requires "lib";
 requires "strict";
+requires "utf8::all";
 requires "warnings";

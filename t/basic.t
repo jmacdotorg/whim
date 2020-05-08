@@ -24,7 +24,7 @@ my $brisote = Brisote->new( { data_directory=>"$FindBin::Bin/run"} );
 }
 
 {
-    diag("Webmention receipt");
+    diag("Webmention receipt (no tests)");
     my $wm_file = path("$FindBin::Bin/source/many_wms.html");
 
     my @wms = Web::Mention->new_from_html(
@@ -35,16 +35,16 @@ my $brisote = Brisote->new( { data_directory=>"$FindBin::Bin/run"} );
     for my $wm (@wms) {
         $brisote->receive_webmention( $wm );
     }
-
-    my $count = $brisote->fetch_webmentions( {} );
-
-    is( $count, 7, 'Received WMs are in the database.' );
 }
 
 {
     diag("Webmention verification");
     my $count = $brisote->process_webmentions;
     is ($count, 7, "Processed expected number of stored webmentions.");
+
+    $count = $brisote->fetch_webmentions( {} );
+
+    is( $count, 7, 'Received WMs are in the database.' );
 }
 
 {

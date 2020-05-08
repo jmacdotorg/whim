@@ -2,7 +2,7 @@ package Brisote;
 
 use warnings;
 use strict;
-use v5.20;
+use v5.24;
 
 use Moo;
 use DBI;
@@ -16,7 +16,7 @@ use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
 
 use Web::Mention;
 
-our $VERSION = '2020042010';
+our $VERSION = '2020.04.20.10';
 
 has 'data_directory' => (
     is => 'ro',
@@ -115,8 +115,13 @@ sub fetch_webmentions( $self, $args ) {
         push @wheres, "target like ?";
         push @bind_args, "\%$args->{target}\%";
     }
+
+    # Unless we're processing WMs, we want only verified ones.
     if ( $args->{ process } ) {
         push @wheres, "is_tested != 1";
+    }
+    else {
+        push @wheres, "is_verified = 1";
     }
 
     my $where_clause = '';
@@ -131,12 +136,17 @@ sub fetch_webmentions( $self, $args ) {
 
     my @wms;
     while ( my $row = $sth->fetchrow_hashref ) {
+#        use Data::Dumper; warn Dumper($row);
         my %args = (
             source => URI->new($row->{source}),
             target => URI->new($row->{target}),
+            original_source => URI->new($row->{original_source}),
+            title => $row->{title},
+            content => $row->{content},
             source_html => $row->{html},
             is_verified => $row->{is_verified},
             is_tested => $row->{is_tested},
+            type => $row->{type},
             time_received =>
                 DateTime::Format::ISO8601
                     ->parse_datetime($row->{time_received}),
@@ -147,7 +157,23 @@ sub fetch_webmentions( $self, $args ) {
         foreach (qw(time_verified is_verified)) {
             delete $args{$_} unless defined $args{$_};
         }
-        push @wms, Web::Mention->new( \%args );
+        if ( $row->{author_name} ) {
+            my %author_args;
+            $author_args{name} = $row->{author_name};
+            foreach (qw(url photo)) {
+                if ( $row->{"author_$_"} ) {
+                    $author_args{$_} = $row->{"author_$_"};
+                }
+            }
+
+            $args{author} = Web::Mention::Author->new( \%author_args );
+        }
+        else {
+            $args{author} = undef;
+        }
+        my $wm = Web::Mention->new( \%args );
+        push @wms, $wm;
+
     }
 
     return @wms;
@@ -160,7 +186,8 @@ sub process_webmentions( $self ) {
     my $sth = $self->dbh->prepare(
         'update wm set is_tested = 1, is_verified = ?, '
         . 'author_name = ?, author_url = ?, author_photo = ?, '
-        . 'time_verified = ?, html = ? '
+        . 'time_verified = ?, html = ?, author_photo_hash = ?, '
+        . 'type = ? '
         . 'where source = ? and target = ? and time_received = ?'
     );
 
@@ -183,9 +210,11 @@ sub process_webmentions( $self ) {
         my @bind_values = (
             $wm->author? $wm->author->name : undef,
             $wm->author? $wm->author->url : undef,
-            $photo_hash,
+            $wm->author? $wm->author->photo : undef,
             $wm->is_verified? $wm->time_verified->iso8601 : undef,
             $wm->source_html,
+            $photo_hash,
+            $wm->type,
             $wm->source->as_string,
             $wm->target->as_string,
             $wm->time_received->iso8601,
@@ -246,7 +275,6 @@ sub _process_author_photo_tx( $self, $tx ) {
     my $photo_hash = sha256_hex( $tx->result->content->asset->slurp );
     my $photo_file = $self->image_directory->child( $photo_hash );
     unless (-e $photo_file) {
-        warn "No photo in local image cache! Let's store it...";
         $tx->result->content->asset->move_to( $photo_file );
     }
     return $photo_hash;
@@ -254,7 +282,7 @@ sub _process_author_photo_tx( $self, $tx ) {
 
 sub _initialize_database( $dbh ) {
     my @statements = (
-        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128))",
+        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128), author_photo_hash char(128))",
         "CREATE TABLE block (source char(128))",
     );
 

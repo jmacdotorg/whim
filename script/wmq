@@ -1,8 +1,8 @@
 use warnings;
 use strict;
-use v5.10;
+use v5.24;
 use utf8::all;
-use Findbin;
+use FindBin;
 
 use feature 'signatures';
 no warnings qw(experimental::signatures);
