@@ -8,11 +8,7 @@ use lib
     "$FindBin::Bin/../lib",
 ;
 
-# XXX Dunno the expected way to daemonize mojo scripts,
-#     or SSL cert/key handling. (keeping some SSL confif code from Plerd.)
-
 use Mojolicious::Lite;
-use Getopt::Long;
 use Try::Tiny;
 
 use Brisote;
@@ -21,33 +17,6 @@ use Readonly;
 Readonly my $OK          => 200;
 Readonly my $ACCEPTED    => 202;
 Readonly my $BAD_REQUEST => 400;
-
-my $webmention_enabled = 0;
-my $webmention_port  = 0;
-my $config_file;
-my $ssl_cert;
-my $ssl_key;
-GetOptions(
-    'config=s'              => \$config_file,
-    'ssl-cert=s'            => \$ssl_cert,
-    'ssl-key=s'             => \$ssl_key,
-);
-
-if ($ssl_cert || $ssl_key) {
-    unless ( $ssl_cert && $ssl_key ) {
-        die "Can't start $0: You must define both ssl-cert and ssl-key, "
-            . "if you define either of them.\n";
-    }
-    unless (-r $ssl_cert) {
-        die "Can't start $0: No readable ssl-cert file at $ssl_cert.\n";
-    }
-    unless (-r $ssl_key) {
-        die "Can't start $0: No readable ssl-key file at $ssl_key.\n";
-    }
-}
-
-my $webserver_pid;
-$SIG{TERM} = \&handle_term_signal;
 
 $ENV{MOJO_MODE} ||= 'production';
 
