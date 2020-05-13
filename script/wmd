@@ -72,4 +72,22 @@ get '/' => sub {
     $c->render( status => $OK, text => 'OK (listening for webmentions)' );
 };
 
-app->start;
+app->start('daemon', @ARGV);
+
+=head1 NAME
+
+wmd - Brisote's daemon
+
+=head1 SYNOPSIS
+
+  wmd
+  wmd -m production -l http://*:8080
+  wmd -l http://127.0.0.1:8080 -l https://[::]:8081
+  wmd -l 'https://*:443?cert=./server.crt&key=./server.key'
+  wmd -l http+unix://%2Ftmp%2Fmyapp.sock
+
+=head1 DESCRIPTION
+
+A webmention listener.
+
+Further details TBA.
