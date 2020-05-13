@@ -62,26 +62,37 @@ post '/' => sub {
     }
     catch {
         $c->render( status => $BAD_REQUEST, text => "Malformed webmention: $_" );
+        app->log->info( 'Rejected a malformed webmention.' );
     };
     return unless $webmention;
+
+    # Pull out the source and target params, mostly for logging
+    my $source = $c->param( 'source' );
+    my $target = $c->param( 'target' );
 
     # XXX For the present, naively accept all webmentions.
     #     This is technically legal under section 3.2.1 of the spec.
     #     But it SHOULD check against some stored config about whether
     #     it cares about the target URL at all.
     unless ( 1 ) {
-        $c->render( status => $BAD_REQUEST, text => "Unrecognized target URL." );
+        my $error_text = "Unrecognized target URL: $target";
+        $c->render(
+            status => $BAD_REQUEST,
+            text => $error_text
+        );
+        app->log->info( $error_text );
         return;
     }
 
     my $success_text = "Webmention accepted, and queued for verification and "
                      . "processing. Thank you!";
 
-    my $return_link_url = $c->param( 'target' );
     my $return_link_text = 'Return to previous page.';
-    $success_text .= qq{ <a href="$return_link_url">$return_link_text</a>};
+    $success_text .= qq{ <a href="$target">$return_link_text</a>};
 
     $c->render( status => $ACCEPTED, text => $success_text );
+
+    app->log->info( "Accepted: $source -> $target" );
 
     $brisote->receive_webmention( $webmention );
 };
