@@ -115,6 +115,10 @@ sub fetch_webmentions( $self, $args ) {
         push @wheres, "target like ?";
         push @bind_args, "\%$args->{target}\%";
     }
+    if ( $args->{ type } ) {
+        push @wheres, "type like ?";
+        push @bind_args, $args->{ type };
+    }
 
     # Unless we're processing WMs, we want only verified ones.
     if ( $args->{ process } ) {
@@ -136,11 +140,13 @@ sub fetch_webmentions( $self, $args ) {
 
     my @wms;
     while ( my $row = $sth->fetchrow_hashref ) {
-#        use Data::Dumper; warn Dumper($row);
         my %args = (
             source => URI->new($row->{source}),
             target => URI->new($row->{target}),
-            original_source => URI->new($row->{original_source}),
+            original_source =>
+                $row->{original_source}
+                    ? URI->new($row->{original_source})
+                    : undef,
             title => $row->{title},
             content => $row->{content},
             source_html => $row->{html},
@@ -154,7 +160,10 @@ sub fetch_webmentions( $self, $args ) {
                 DateTime::Format::ISO8601
                     ->parse_datetime($row->{time_verified}) : undef,
         );
-        foreach (qw(time_verified is_verified)) {
+
+        # Delete keys that, if undef, we want the webmention object to
+        # lazily re-derive
+        foreach (qw(time_verified is_verified original_source content title)) {
             delete $args{$_} unless defined $args{$_};
         }
         if ( $row->{author_name} ) {
@@ -187,7 +196,7 @@ sub process_webmentions( $self ) {
         'update wm set is_tested = 1, is_verified = ?, '
         . 'author_name = ?, author_url = ?, author_photo = ?, '
         . 'time_verified = ?, html = ?, author_photo_hash = ?, '
-        . 'type = ? '
+        . 'type = ?, original_source = ?, content = ?, title = ? '
         . 'where source = ? and target = ? and time_received = ?'
     );
 
@@ -215,6 +224,9 @@ sub process_webmentions( $self ) {
             $wm->source_html,
             $photo_hash,
             $wm->type,
+            $wm->original_source->as_string,
+            $wm->content,
+            $wm->title,
             $wm->source->as_string,
             $wm->target->as_string,
             $wm->time_received->iso8601,
@@ -282,7 +294,7 @@ sub _process_author_photo_tx( $self, $tx ) {
 
 sub _initialize_database( $dbh ) {
     my @statements = (
-        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128), author_photo_hash char(128))",
+        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, content text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128), author_photo_hash char(128), title char(255))",
         "CREATE TABLE block (source char(128))",
     );
 
