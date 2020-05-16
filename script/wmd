@@ -6,7 +6,7 @@ use strict;
 use FindBin;
 use lib
     "$FindBin::Bin/../lib",
-;
+    ;
 
 use Mojolicious::Lite;
 use Try::Tiny;
@@ -20,50 +20,53 @@ Readonly my $BAD_REQUEST => 400;
 
 $ENV{MOJO_MODE} ||= 'production';
 
-my $brisote = Brisote->new( { data_directory=>"$FindBin::Bin/../data" } );
+my $brisote = Brisote->new( { data_directory => "$FindBin::Bin/../data" } );
 
 post '/' => sub {
     my $c = shift;
 
     my $webmention;
     try {
-        $webmention = Web::Mention->new_from_request ( $c );
+        $webmention = Web::Mention->new_from_request($c);
     }
     catch {
-        $c->render( status => $BAD_REQUEST, text => "Malformed webmention: $_" );
-        app->log->info( 'Rejected a malformed webmention.' );
+        $c->render(
+            status => $BAD_REQUEST,
+            text   => "Malformed webmention: $_"
+        );
+        app->log->info('Rejected a malformed webmention.');
     };
     return unless $webmention;
 
     # Pull out the source and target params, mostly for logging
-    my $source = $c->param( 'source' );
-    my $target = $c->param( 'target' );
+    my $source = $c->param('source');
+    my $target = $c->param('target');
 
     # XXX For the present, naively accept all webmentions.
     #     This is technically legal under section 3.2.1 of the spec.
     #     But it SHOULD check against some stored config about whether
     #     it cares about the target URL at all.
-    unless ( 1 ) {
+    unless (1) {
         my $error_text = "Unrecognized target URL: $target";
         $c->render(
             status => $BAD_REQUEST,
-            text => $error_text
+            text   => $error_text
         );
-        app->log->info( $error_text );
+        app->log->info($error_text);
         return;
     }
 
     my $success_text = "Webmention accepted, and queued for verification and "
-                     . "processing. Thank you!";
+        . "processing. Thank you!";
 
     my $return_link_text = 'Return to previous page.';
     $success_text .= qq{ <a href="$target">$return_link_text</a>};
 
     $c->render( status => $ACCEPTED, text => $success_text );
 
-    app->log->info( "Accepted: $source -> $target" );
+    app->log->info("Accepted: $source -> $target");
 
-    $brisote->receive_webmention( $webmention );
+    $brisote->receive_webmention($webmention);
 };
 
 get '/' => sub {

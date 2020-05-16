@@ -5,13 +5,13 @@ use utf8::all;
 use Web::Mention;
 use URI;
 
-my ($source, $target) = @ARGV;
+my ( $source, $target ) = @ARGV;
 
 $source = check_argument( source => $source );
 
 $target = check_argument( target => $target );
 
-my $wm = Web::Mention->new( { source => $source, target => $target });
+my $wm = Web::Mention->new( { source => $source, target => $target } );
 
 my $success = $wm->send;
 
@@ -25,13 +25,14 @@ else {
 use feature 'signatures';
 no warnings qw(experimental::signatures);
 
-sub check_argument( $argument_name, $url_text ) {
-    unless (defined $url_text) {
+sub check_argument ( $argument_name, $url_text ) {
+    unless ( defined $url_text ) {
         die "Usage: $0 source-url target-url\n";
     }
-    my $url = URI->new( $url_text )
-        or die "The argument for the $argument_name does not look like a valid "
-            . "URL. (Got: $url_text)\n";
+    my $url = URI->new($url_text)
+        or die
+        "The argument for the $argument_name does not look like a valid "
+        . "URL. (Got: $url_text)\n";
 
     return $url;
 }
