@@ -16,3 +16,8 @@ requires "lib";
 requires "strict";
 requires "utf8::all";
 requires "warnings";
+
+on 'develop' => sub {
+  requires 'Code::TidyAll';
+  requires 'Perl::Tidy';
+};
