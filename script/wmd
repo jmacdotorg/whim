@@ -75,7 +75,7 @@ get '/' => sub {
     $c->render( status => $OK, text => 'OK (listening for webmentions)' );
 };
 
-app->start('daemon', @ARGV);
+app->start( 'daemon', @ARGV );
 
 =head1 NAME
 
