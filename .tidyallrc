@@ -1,0 +1,4 @@
+[PerlTidy]
+select = **/*.{pl,pm,t,psgi}
+select = script/*
+argv = --profile=$ROOT/.perltidyrc
