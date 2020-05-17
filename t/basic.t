@@ -9,15 +9,15 @@ use Path::Tiny;
 use Try::Tiny;
 
 use lib "$FindBin::Bin/../lib";
-use_ok("Brisote");
+use_ok("Whim");
 
 initialize_tests();
 
-diag("Create Brisote object");
-my $brisote = Brisote->new( { data_directory => "$FindBin::Bin/run" } );
+diag("Create Whim object");
+my $whim = Whim->new( { data_directory => "$FindBin::Bin/run" } );
 
 {
-    my $count = $brisote->fetch_webmentions( {} );
+    my $count = $whim->fetch_webmentions( {} );
 
     is( $count, 0, 'Zero wms in db at the start of testing.' );
 }
@@ -32,23 +32,23 @@ my $brisote = Brisote->new( { data_directory => "$FindBin::Bin/run" } );
     );
 
     for my $wm (@wms) {
-        $brisote->receive_webmention($wm);
+        $whim->receive_webmention($wm);
     }
 }
 
 {
     diag("Webmention verification");
-    my $count = $brisote->process_webmentions;
+    my $count = $whim->process_webmentions;
     is( $count, 7, "Processed expected number of stored webmentions." );
 
-    $count = $brisote->fetch_webmentions( {} );
+    $count = $whim->fetch_webmentions( {} );
 
     is( $count, 7, 'Received WMs are in the database.' );
 }
 
 {
     diag("Webmention querying");
-    my @wms = $brisote->fetch_webmentions( { target => 'reply-target' } );
+    my @wms = $whim->fetch_webmentions( { target => 'reply-target' } );
     is( scalar(@wms), 2, "Simple query worked as expected." );
 }
 

@@ -11,7 +11,7 @@ use lib
 use Mojolicious::Lite;
 use Try::Tiny;
 
-use Brisote;
+use Whim;
 
 use Readonly;
 Readonly my $OK          => 200;
@@ -20,7 +20,7 @@ Readonly my $BAD_REQUEST => 400;
 
 $ENV{MOJO_MODE} ||= 'production';
 
-my $brisote = Brisote->new( { data_directory => "$FindBin::Bin/../data" } );
+my $whim = Whim->new( { data_directory => "$FindBin::Bin/../data" } );
 
 post '/' => sub {
     my $c = shift;
@@ -66,7 +66,7 @@ post '/' => sub {
 
     app->log->info("Accepted: $source -> $target");
 
-    $brisote->receive_webmention($webmention);
+    $whim->receive_webmention($webmention);
 };
 
 get '/' => sub {
@@ -79,7 +79,7 @@ app->start( 'daemon', @ARGV );
 
 =head1 NAME
 
-wmd - Brisote's daemon
+wmd - Whim's daemon
 
 =head1 SYNOPSIS
 

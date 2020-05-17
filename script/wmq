@@ -17,12 +17,12 @@ GetOptions(
 
 massage_options();
 
-use Brisote;
+use Whim;
 
-my $brisote = Brisote->new( { data_directory => "$FindBin::Bin/../data" } );
+my $whim = Whim->new( { data_directory => "$FindBin::Bin/../data" } );
 
 if ( $options{unblock} ) {
-    my @failures = $brisote->unblock_sources( $options{unblock}->@* );
+    my @failures = $whim->unblock_sources( $options{unblock}->@* );
 
     my $unchanged_count = @failures;
     my $changed_count   = scalar( $options{unblock}->@* ) - $unchanged_count;
@@ -43,7 +43,7 @@ elsif ( $options{list} ) {
     say "Current blocklist:";
     say "==================";
 
-    while ( my ($source) = $brisote->blocked_sources ) {
+    while ( my ($source) = $whim->blocked_sources ) {
         say $source;
     }
     exit;
@@ -57,7 +57,7 @@ if ( $options{count} ) {
 elsif ( $options{process} ) {
     if (@wms) {
         say "Verifying " . scalar @wms . " webmentions...";
-        my $verified_count = $brisote->process_webmentions;
+        my $verified_count = $whim->process_webmentions;
         my $s              = $verified_count == 1 ? '' : 's';
         say "\n$verified_count webmention${s} passed verification.";
     }
@@ -76,7 +76,7 @@ if ( $options{block} ) {
         . "'$options{source}'? (Y/N)";
     my $response = <STDIN>;
     if ( $response =~ /^[Yy]/ ) {
-        $brisote->block_sources( $options{sources} - @* );
+        $whim->block_sources( $options{sources} - @* );
         say "OK, block list updated.";
     }
     else {
@@ -85,7 +85,7 @@ if ( $options{block} ) {
 }
 
 sub get_wms {
-    my @wms = $brisote->fetch_webmentions( \%options );
+    my @wms = $whim->fetch_webmentions( \%options );
     return @wms;
 }
 
@@ -142,7 +142,7 @@ sub massage_options {
             die "ERROR: You must specify a source fragement (-s or --source) "
                 . "to add to the blocklist.\n";
         }
-        if ( grep { $_ eq $options{source} } $brisote->blocked_sources ) {
+        if ( grep { $_ eq $options{source} } $whim->blocked_sources ) {
             die "ERROR: We're already blocking '$options{source}`.\n";
         }
         if ( $options{unblock} ) {

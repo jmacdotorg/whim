@@ -1,4 +1,4 @@
-package Brisote;
+package Whim;
 
 use warnings;
 use strict;
