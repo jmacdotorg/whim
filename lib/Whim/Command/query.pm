@@ -1,87 +1,91 @@
-use warnings;
-use strict;
-use v5.24;
-use utf8::all;
-use FindBin;
+package Whim::Command::query;
+use Mojo::Base 'Mojolicious::Command';
 
 use feature 'signatures';
 no warnings qw(experimental::signatures);
 
-use Getopt::Long;
+has description => 'Fetch webmentions';
+has usage       => "XXX Fill me in! XXX";
+
+use Getopt::Long qw(GetOptionsFromArray);
 my %options;
-GetOptions(
+my $whim;
+
+sub run {
+    my ($self, @args) = @_;
+    GetOptionsFromArray( \@args,
     \%options,   'before=s', 'after=s',       'on=s',
     'source=s@', 'target=s', 'not-source=s@', 'process',
     'count',     'block',    'list',          'unblock',
-);
+    );
 
-massage_options();
+    massage_options();
 
-use Whim;
+    $whim = $self->app->whim;
 
-my $whim = Whim->new( { data_directory => "$FindBin::Bin/../data" } );
+    if ( $options{unblock} ) {
+        my @failures = $whim->unblock_sources( $options{unblock}->@* );
 
-if ( $options{unblock} ) {
-    my @failures = $whim->unblock_sources( $options{unblock}->@* );
+        my $unchanged_count = @failures;
+        my $changed_count   = scalar( $options{unblock}->@* ) - $unchanged_count;
 
-    my $unchanged_count = @failures;
-    my $changed_count   = scalar( $options{unblock}->@* ) - $unchanged_count;
-
-    if ( $changed_count && !$unchanged_count ) {
-        say "OK, block list updated.";
+        if ( $changed_count && !$unchanged_count ) {
+            say "OK, block list updated.";
+        }
+        elsif ( $changed_count && $unchanged_count ) {
+            say "$changed_count rows removed from block list. (The remaining "
+                . "$unchanged_count were not in the list to begin with.)";
+        }
+        else {
+            say "Block list unchanged; none of these sources were in it.";
+        }
+        exit;
     }
-    elsif ( $changed_count && $unchanged_count ) {
-        say "$changed_count rows removed from block list. (The remaining "
-            . "$unchanged_count were not in the list to begin with.)";
-    }
-    else {
-        say "Block list unchanged; none of these sources were in it.";
-    }
-    exit;
-}
-elsif ( $options{list} ) {
-    say "Current blocklist:";
-    say "==================";
+    elsif ( $options{list} ) {
+        say "Current blocklist:";
+        say "==================";
 
-    while ( my ($source) = $whim->blocked_sources ) {
-        say $source;
+        while ( my ($source) = $whim->blocked_sources ) {
+            say $source;
+        }
+        exit;
     }
-    exit;
-}
 
-my @wms = get_wms();
+    my @wms = get_wms();
 
-if ( $options{count} ) {
-    say "Matching webmentions: " . scalar @wms;
-}
-elsif ( $options{process} ) {
-    if (@wms) {
-        say "Verifying " . scalar @wms . " webmentions...";
-        my $verified_count = $whim->process_webmentions;
-        my $s              = $verified_count == 1 ? '' : 's';
-        say "\n$verified_count webmention${s} passed verification.";
+    if ( $options{count} ) {
+        say "Matching webmentions: " . scalar @wms;
     }
-    else {
-        say "No unverified webmentions to process.";
-    }
-}
-else {
-    display_wms(@wms);
-}
-
-if ( $options{block} ) {
-    say "Are you sure you want to "
-        . ( @wms ? "unpublish all these webmentions, and " : '' )
-        . "block any future webmention whose source matches "
-        . "'$options{source}'? (Y/N)";
-    my $response = <STDIN>;
-    if ( $response =~ /^[Yy]/ ) {
-        $whim->block_sources( $options{sources} - @* );
-        say "OK, block list updated.";
+    elsif ( $options{process} ) {
+        if (@wms) {
+            say "Verifying " . scalar @wms . " webmentions...";
+            my $verified_count = $whim->process_webmentions;
+            my $s              = $verified_count == 1 ? '' : 's';
+            say "\n$verified_count webmention${s} passed verification.";
+        }
+        else {
+            say "No unverified webmentions to process.";
+        }
     }
     else {
-        say "OK, block list unchanged.";
+        display_wms(@wms);
     }
+
+    if ( $options{block} ) {
+        say "Are you sure you want to "
+            . ( @wms ? "unpublish all these webmentions, and " : '' )
+            . "block any future webmention whose source matches "
+            . "'$options{source}'? (Y/N)";
+        my $response = <STDIN>;
+        if ( $response =~ /^[Yy]/ ) {
+            $whim->block_sources( $options{sources} - @* );
+            say "OK, block list updated.";
+        }
+        else {
+            say "OK, block list unchanged.";
+        }
+    }
+
 }
 
 sub get_wms {
@@ -160,3 +164,6 @@ sub massage_options {
     $options{not_source} = $options{'not-source'};
 
 }
+
+
+1;

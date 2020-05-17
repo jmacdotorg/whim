@@ -1,307 +1,76 @@
 package Whim;
+use Mojo::Base 'Mojolicious';
 
-use warnings;
-use strict;
-use v5.24;
-
-use Moo;
-use DBI;
-use Path::Tiny;
-use Scalar::Util qw(blessed);
-use DateTime::Format::ISO8601;
-use Mojo::UserAgent;
-use Digest::SHA qw(sha256_hex);
-
-use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
-
-use Web::Mention;
-
-our $VERSION = '2020.04.20.10';
-
-has 'data_directory' => (
-    is  => 'ro',
-    isa => sub {
-        die "data_directory must be a valid path or Path::Tiny object\n"
-            unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') );
-    },
-    required => 1,
-    coerce   => sub { path( $_[0] ) },
-);
-
-has 'dbh' => ( is => 'lazy', );
-
-has 'image_directory' => ( is => 'lazy', );
-
-has 'ua' => (
-    is      => 'ro',
-    default => sub { Mojo::UserAgent->new },
-);
+use Whim::Core;
+use Try::Tiny;
 
 use Readonly;
-Readonly my $IMAGEDIR_NAME => 'images';
+Readonly my $OK          => 200;
+Readonly my $ACCEPTED    => 202;
+Readonly my $BAD_REQUEST => 400;
 
-no warnings "experimental::signatures";
-use feature "signatures";
+sub startup {
+    my $self = shift;
 
-sub unblock_sources ( $self, @sources ) {
-    my @failures;
-    for my $source (@sources) {
-        my ($extant) = $self->dbh->selectrow_array(
-            'select * from block where source = ?',
-            {}, $source );
+    push @{$self->commands->namespaces}, 'Whim::Command';
+    $self->helper(whim => sub { state $whim = Whim::Core->new({ data_directory => "$FindBin::Bin/../data" })});
 
-        if ($extant) {
-            $self->dbh->do( 'delete from block where source = ?',
-                {}, $source );
-        }
-        else {
-            push @failures, $source;
-        }
-    }
-    return @failures;
-}
+    my $r = $self->routes;
 
-sub block_sources ( $self, @sources ) {
-    for my $source (@sources) {
-        $self->dbh->do( 'insert into block values (?)', {}, $source );
-    }
-}
+    $r->post('/' => sub {
+       my $c = shift;
 
-sub blocked_sources( $self ) {
-    my @sources;
-    my $sth = $self->dbh->prepare('select source from block order by source');
-    $sth->execute;
-    while ( my ($source) = $sth->fetchrow_array ) {
-        push @sources, $source;
-    }
-    return @sources;
-}
+       my $webmention;
+       try {
+           $webmention = Web::Mention->new_from_request($c);
+       }
+       catch {
+           $c->render(
+               status => $BAD_REQUEST,
+               text   => "Malformed webmention: $_"
+           );
+           $c->log->info('Rejected a malformed webmention.');
+       };
+       return unless $webmention;
 
-sub fetch_webmentions ( $self, $args ) {
+       # Pull out the source and target params, mostly for logging
+       my $source = $c->param('source');
+       my $target = $c->param('target');
 
-    # This complex query lets us flexibly use the contents of the `block`
-    # table as a blocklist.
-    my $query =
-          'select wm.* from wm where original_source not in '
-        . '(select original_source from wm '
-        . 'inner join (select source from block) b on '
-        . ' wm.original_source like \'%\' || b.source || \'%\') ';
-    my @wheres;
-    my @bind_args;
+       # XXX For the present, naively accept all webmentions.
+       #     This is technically legal under section 3.2.1 of the spec.
+       #     But it SHOULD check against some stored config about whether
+       #     it cares about the target URL at all.
+       unless (1) {
+           my $error_text = "Unrecognized target URL: $target";
+           $c->render(
+               status => $BAD_REQUEST,
+               text   => $error_text
+           );
+           $c->log->info($error_text);
+           return;
+       }
 
-    if ( $args->{before} ) {
-        push @wheres,    "time_received <= ?";
-        push @bind_args, $args->{before};
-    }
-    if ( $args->{after} ) {
-        push @wheres,    "time_received >= ?";
-        push @bind_args, $args->{after};
-    }
-    if ( $args->{source} ) {
-        foreach ( $args->{source}->@* ) {
-            push @wheres,    "original_source like ?";
-            push @bind_args, "\%$_\%";
-        }
-    }
-    if ( $args->{'not-source'} ) {
-        foreach ( $args->{'not-source'}->@* ) {
-            push @wheres,    "original_source not like ?";
-            push @bind_args, "\%$_\%";
-        }
-    }
-    if ( $args->{target} ) {
-        push @wheres,    "target like ?";
-        push @bind_args, "\%$args->{target}\%";
-    }
-    if ( $args->{type} ) {
-        push @wheres,    "type like ?";
-        push @bind_args, $args->{type};
-    }
+       my $success_text = "Webmention accepted, and queued for verification and "
+           . "processing. Thank you!";
 
-    # Unless we're processing WMs, we want only verified ones.
-    if ( $args->{process} ) {
-        push @wheres, "is_tested != 1";
-    }
-    else {
-        push @wheres, "is_verified = 1";
-    }
+       my $return_link_text = 'Return to previous page.';
+       $success_text .= qq{ <a href="$target">$return_link_text</a>};
 
-    my $where_clause = '';
-    if (@wheres) {
-        $where_clause = 'and ' . join( ' and ', @wheres );
-    }
+       $c->render( status => $ACCEPTED, text => $success_text );
 
-    $query .= "$where_clause order by time_received";
+       $c->log->info("Accepted: $source -> $target");
 
-    my $sth = $self->dbh->prepare($query);
-    $sth->execute(@bind_args);
+       $c->whim->receive_webmention($webmention);
+   });
 
-    my @wms;
-    while ( my $row = $sth->fetchrow_hashref ) {
-        my %args = (
-            source          => URI->new( $row->{source} ),
-            target          => URI->new( $row->{target} ),
-            original_source => $row->{original_source}
-            ? URI->new( $row->{original_source} )
-            : undef,
-            title         => $row->{title},
-            content       => $row->{content},
-            source_html   => $row->{html},
-            is_verified   => $row->{is_verified},
-            is_tested     => $row->{is_tested},
-            type          => $row->{type},
-            time_received => DateTime::Format::ISO8601->parse_datetime(
-                $row->{time_received}
-            ),
-            time_verified => $row->{time_verified}
-            ? DateTime::Format::ISO8601->parse_datetime(
-                $row->{time_verified}
-                )
-            : undef,
-        );
+   $r->get('/' => sub {
+       my $c = shift;
 
-        # Delete keys that, if undef, we want the webmention object to
-        # lazily re-derive
-        foreach (qw(time_verified is_verified original_source content title))
-        {
-            delete $args{$_} unless defined $args{$_};
-        }
-        if ( $row->{author_name} ) {
-            my %author_args;
-            $author_args{name} = $row->{author_name};
-            foreach (qw(url photo)) {
-                if ( $row->{"author_$_"} ) {
-                    $author_args{$_} = $row->{"author_$_"};
-                }
-            }
+       $c->render( status => $OK, text => 'OK (listening for webmentions)' );
+   });
 
-            $args{author} = Web::Mention::Author->new( \%author_args );
-        }
-        else {
-            $args{author} = undef;
-        }
-        my $wm = Web::Mention->new( \%args );
-        push @wms, $wm;
 
-    }
-
-    return @wms;
-
-}
-
-# process_webmentions: Verify all untested WMs.
-sub process_webmentions( $self ) {
-    my $verified_count = 0;
-    my $sth            = $self->dbh->prepare(
-              'update wm set is_tested = 1, is_verified = ?, '
-            . 'author_name = ?, author_url = ?, author_photo = ?, '
-            . 'time_verified = ?, html = ?, author_photo_hash = ?, '
-            . 'type = ?, original_source = ?, content = ?, title = ? '
-            . 'where source = ? and target = ? and time_received = ?' );
-
-    for my $wm ( $self->fetch_webmentions( { process => 1 } ) ) {
-
-        # Grab the author image
-        my $photo_hash;
-        if ( $wm->author && $wm->author->photo ) {
-            my $url = $wm->author->photo->as_string;
-            $self->ua->get_p($url)->then(
-                sub( $tx ) {    # Promise accepted
-                    $photo_hash = $self->_process_author_photo_tx($tx);
-                },
-                sub( @args ) {    # Promise rejected
-                    warn "Couldn't get author photo from $url: @args\n";
-                }
-            )->wait;
-        }
-
-        my @bind_values = (
-            $wm->author      ? $wm->author->name           : undef,
-            $wm->author      ? $wm->author->url            : undef,
-            $wm->author      ? $wm->author->photo          : undef,
-            $wm->is_verified ? $wm->time_verified->iso8601 : undef,
-            $wm->source_html,
-            $photo_hash,
-            $wm->type,
-            $wm->original_source->as_string,
-            $wm->content,
-            $wm->title,
-            $wm->source->as_string,
-            $wm->target->as_string,
-            $wm->time_received->iso8601,
-        );
-
-        if ( $wm->is_verified ) {
-            $verified_count++;
-            $sth->execute( 1, @bind_values );
-        }
-        else {
-            warn "FAILED to verify s:"
-                . $wm->source->as_string . "t: "
-                . $wm->target->as_string;
-            $sth->execute( 0, @bind_values );
-        }
-    }
-    return $verified_count;
-}
-
-# Receive_webmention: Treat the given wm as just-received, untested, unverified.
-#                     Store its minimal info in the database. The expectation
-#                     is that we'll process it later (see process_webmentions).
-sub receive_webmention ( $self, $wm ) {
-    $self->dbh->do(
-        'insert into wm '
-            . '(source, target, time_received, is_tested ) '
-            . 'values (?, ?, ?, ? )',
-        {},
-        $wm->source->as_string,
-        $wm->target->as_string,
-        $wm->time_received->iso8601,
-        0,
-        0,
-    );
-}
-
-sub _build_dbh( $self ) {
-    my $dir = $self->data_directory;
-
-    my $db_file                 = $dir->child('wm.db');
-    my $db_file_already_existed = 1 if -e $db_file;
-
-    my $dbh = DBI->connect( "dbi:SQLite:dbname=$dir/wm.db", "", "" );
-    if ($dbh) {
-        unless ($db_file_already_existed) {
-            _initialize_database($dbh);
-        }
-        return $dbh;
-    }
-    else {
-        die "Can't create or use a database file in $dir: $DBI::errtr\n";
-    }
-}
-
-sub _build_image_directory( $self ) {
-    return $self->data_directory->child($IMAGEDIR_NAME);
-}
-
-sub _process_author_photo_tx ( $self, $tx ) {
-    my $photo_hash = sha256_hex( $tx->result->content->asset->slurp );
-    my $photo_file = $self->image_directory->child($photo_hash);
-    unless ( -e $photo_file ) {
-        $tx->result->content->asset->move_to($photo_file);
-    }
-    return $photo_hash;
-}
-
-sub _initialize_database( $dbh ) {
-    my @statements = (
-        "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, content text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128), author_photo_hash char(128), title char(255))",
-        "CREATE TABLE block (source char(128))",
-    );
-
-    foreach (@statements) {
-        $dbh->do($_);
-    }
 }
 
 1;
