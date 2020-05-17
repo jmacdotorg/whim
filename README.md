@@ -32,11 +32,13 @@ Other stuff:
 
 ## "Whim"?
 
-According to Wikipedia,
+Two possible explanations:
 
-> Whim (also brisole) is the northeast trade wind over Cuba when it is blowing more strongly than usual. The typical strength of this wind is 9 m s−1; anything blowing at a stronger rate may be described as a whim. A whim may be associated with tropical cyclones passing north-east of the island.
+1. It stands for [**whi**te **m**atter](https://en.wikipedia.org/wiki/White_matter), the connective tissue betweeen distant neurological structures that resembles Webmention's role in allowing independent websites to communicate.
 
-=head1 Copyright and licence
+1. Whim puts the _hi!_ in webmentions.
+
+## Copyright and licence
 
 This software is Copyright (c) 2020 by Jason McIntosh.
 
