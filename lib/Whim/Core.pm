@@ -5,10 +5,10 @@ use strict;
 use v5.24;
 
 sub startup {
-  my $self = shift;
+    my $self = shift;
 
-  # Add another namespace to load commands from
-  push @{$self->commands->namespaces}, 'Whim::Command';
+    # Add another namespace to load commands from
+    push @{ $self->commands->namespaces }, 'Whim::Command';
 }
 
 use Moo;

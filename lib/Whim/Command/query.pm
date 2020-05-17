@@ -12,11 +12,12 @@ my %options;
 my $whim;
 
 sub run {
-    my ($self, @args) = @_;
-    GetOptionsFromArray( \@args,
-    \%options,   'before=s', 'after=s',       'on=s',
-    'source=s@', 'target=s', 'not-source=s@', 'process',
-    'count',     'block',    'list',          'unblock',
+    my ( $self, @args ) = @_;
+    GetOptionsFromArray(
+        \@args,    \%options,   'before=s', 'after=s',
+        'on=s',    'source=s@', 'target=s', 'not-source=s@',
+        'process', 'count',     'block',    'list',
+        'unblock',
     );
 
     massage_options();
@@ -27,7 +28,8 @@ sub run {
         my @failures = $whim->unblock_sources( $options{unblock}->@* );
 
         my $unchanged_count = @failures;
-        my $changed_count   = scalar( $options{unblock}->@* ) - $unchanged_count;
+        my $changed_count =
+            scalar( $options{unblock}->@* ) - $unchanged_count;
 
         if ( $changed_count && !$unchanged_count ) {
             say "OK, block list updated.";
@@ -164,6 +166,5 @@ sub massage_options {
     $options{not_source} = $options{'not-source'};
 
 }
-
 
 1;

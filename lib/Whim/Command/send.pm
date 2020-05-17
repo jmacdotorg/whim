@@ -10,7 +10,7 @@ has description => 'Send webmentions';
 has usage       => "XXX Fill me in! XXX";
 
 sub run {
-    my ($self, $source, $target) = @_;
+    my ( $self, $source, $target ) = @_;
 
     $source = check_argument( source => $source );
 
@@ -27,7 +27,6 @@ sub run {
         say "No webmention sent.";
     }
 }
-
 
 sub check_argument ( $argument_name, $url_text ) {
     unless ( defined $url_text ) {
