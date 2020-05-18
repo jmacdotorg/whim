@@ -4,13 +4,6 @@ use warnings;
 use strict;
 use v5.24;
 
-sub startup {
-    my $self = shift;
-
-    # Add another namespace to load commands from
-    push @{ $self->commands->namespaces }, 'Whim::Command';
-}
-
 use Moo;
 use DBI;
 use Path::Tiny;
