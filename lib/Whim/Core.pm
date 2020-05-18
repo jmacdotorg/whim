@@ -16,8 +16,6 @@ use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
 
 use Web::Mention;
 
-our $VERSION = '2020.04.20.10';
-
 has 'data_directory' => (
     is  => 'ro',
     isa => sub {

@@ -9,6 +9,8 @@ Readonly my $OK          => 200;
 Readonly my $ACCEPTED    => 202;
 Readonly my $BAD_REQUEST => 400;
 
+our $VERSION = '2020.05.18.00';
+
 sub startup {
     my $self = shift;
 
