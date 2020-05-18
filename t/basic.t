@@ -9,12 +9,12 @@ use Path::Tiny;
 use Try::Tiny;
 
 use lib "$FindBin::Bin/../lib";
-use_ok("Whim");
+use_ok("Whim::Core");
 
 initialize_tests();
 
 diag("Create Whim object");
-my $whim = Whim->new( { data_directory => "$FindBin::Bin/run" } );
+my $whim = Whim::Core->new( { data_directory => "$FindBin::Bin/run" } );
 
 {
     my $count = $whim->fetch_webmentions( {} );
