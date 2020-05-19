@@ -9,12 +9,12 @@ use DBI;
 use Path::Tiny;
 use Scalar::Util qw(blessed);
 use DateTime::Format::ISO8601;
-use Mojo::UserAgent;
+use LWP::UserAgent;
 use Digest::SHA qw(sha256_hex);
 
 use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
 
-use Web::Mention;
+use Whim::Mention;
 
 has 'data_directory' => (
     is  => 'ro',
@@ -32,7 +32,7 @@ has 'image_directory' => ( is => 'lazy', );
 
 has 'ua' => (
     is      => 'ro',
-    default => sub { Mojo::UserAgent->new },
+    default => sub { LWP::UserAgent->new },
 );
 
 use Readonly;
@@ -151,7 +151,8 @@ sub fetch_webmentions ( $self, $args ) {
             time_received => DateTime::Format::ISO8601->parse_datetime(
                 $row->{time_received}
             ),
-            time_verified => $row->{time_verified}
+            author_photo_hash => $row->{author_photo_hash},
+            time_verified     => $row->{time_verified}
             ? DateTime::Format::ISO8601->parse_datetime(
                 $row->{time_verified}
                 )
@@ -164,6 +165,7 @@ sub fetch_webmentions ( $self, $args ) {
         {
             delete $args{$_} unless defined $args{$_};
         }
+
         if ( $row->{author_name} ) {
             my %author_args;
             $author_args{name} = $row->{author_name};
@@ -175,10 +177,7 @@ sub fetch_webmentions ( $self, $args ) {
 
             $args{author} = Web::Mention::Author->new( \%author_args );
         }
-        else {
-            $args{author} = undef;
-        }
-        my $wm = Web::Mention->new( \%args );
+        my $wm = Whim::Mention->new( \%args );
         push @wms, $wm;
 
     }
@@ -202,15 +201,10 @@ sub process_webmentions( $self ) {
         # Grab the author image
         my $photo_hash;
         if ( $wm->author && $wm->author->photo ) {
-            my $url = $wm->author->photo->as_string;
-            $self->ua->get_p($url)->then(
-                sub( $tx ) {    # Promise accepted
-                    $photo_hash = $self->_process_author_photo_tx($tx);
-                },
-                sub( @args ) {    # Promise rejected
-                    warn "Couldn't get author photo from $url: @args\n";
-                }
-            )->wait;
+            my $url      = $wm->author->photo->abs( $wm->source )->as_string;
+            my $response = $self->ua->get($url);
+            $photo_hash = $self->_process_author_photo_tx($response);
+            $wm->author_photo_hash($photo_hash);
         }
 
         my @bind_values = (
@@ -219,7 +213,7 @@ sub process_webmentions( $self ) {
             $wm->author      ? $wm->author->photo          : undef,
             $wm->is_verified ? $wm->time_verified->iso8601 : undef,
             $wm->source_html,
-            $photo_hash,
+            $wm->author_photo_hash,
             $wm->type,
             $wm->original_source->as_string,
             $wm->content,
@@ -282,13 +276,18 @@ sub _build_image_directory( $self ) {
     return $self->data_directory->child($IMAGEDIR_NAME);
 }
 
-sub _process_author_photo_tx ( $self, $tx ) {
-    my $photo_hash = sha256_hex( $tx->result->content->asset->slurp );
-    my $photo_file = $self->image_directory->child($photo_hash);
-    unless ( -e $photo_file ) {
-        $tx->result->content->asset->move_to($photo_file);
+sub _process_author_photo_tx ( $self, $response ) {
+    if ( $response->is_success ) {
+        my $photo_hash = sha256_hex( $response->decoded_content );
+        my $photo_file = $self->image_directory->child($photo_hash);
+        unless ( -e $photo_file ) {
+            $photo_file->spew( $response->decoded_content );
+        }
+        return $photo_hash;
     }
-    return $photo_hash;
+    else {
+        return undef;
+    }
 }
 
 sub _initialize_database( $dbh ) {
