@@ -47,9 +47,7 @@ my $whim = Whim::Core->new( { data_directory => "$FindBin::Bin/run" } );
 
     my ($wm) = $whim->fetch_webmentions(
         { target => 'http://example.com/another-reply-target' } );
-    is( length $wm->author_photo_hash, 64,
-        'Author photo hash has a value.'
-    );
+    is( length $wm->author_photo_hash, 64, 'Author photo hash has a value.' );
 
 }
 
