@@ -4,6 +4,7 @@ requires "DateTime::Format::ISO8601";
 requires "Digest::SHA";
 requires "FindBin";
 requires "LWP::UserAgent";
+requires "Mojolicious";
 requires "Moo";
 requires "Path::Tiny";
 requires "Readonly";

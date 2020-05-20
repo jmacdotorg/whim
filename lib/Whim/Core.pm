@@ -199,11 +199,10 @@ sub process_webmentions( $self ) {
     for my $wm ( $self->fetch_webmentions( { process => 1 } ) ) {
 
         # Grab the author image
-        my $photo_hash;
         if ( $wm->author && $wm->author->photo ) {
             my $url      = $wm->author->photo->abs( $wm->source )->as_string;
             my $response = $self->ua->get($url);
-            $photo_hash = $self->_process_author_photo_tx($response);
+            my $photo_hash = $self->_process_author_photo_tx($response);
             $wm->author_photo_hash($photo_hash);
         }
 
