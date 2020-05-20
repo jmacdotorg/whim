@@ -8,6 +8,7 @@ requires "Moo";
 requires "Path::Tiny";
 requires "Readonly";
 requires "Scalar::Util";
+requires "Test::Exception";
 requires "Test::More";
 requires "Try::Tiny";
 requires "Web::Mention";
