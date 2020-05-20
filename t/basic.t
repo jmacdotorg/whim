@@ -14,7 +14,7 @@ use_ok("Whim::Core");
 initialize_tests();
 
 diag("Create Whim object");
-my $whim = Whim::Core->new( { data_directory => "$FindBin::Bin/run" } );
+my $whim = Whim::Core->new( { data_directory => $Whim::Core::TRANSIENT_DB } );
 
 {
     my $count = $whim->fetch_webmentions( {} );
