@@ -44,6 +44,11 @@ my $whim = Whim::Core->new( { data_directory => "$FindBin::Bin/run" } );
     $count = $whim->fetch_webmentions( {} );
 
     is( $count, 7, 'Received WMs are in the database.' );
+
+    my ($wm) = $whim->fetch_webmentions(
+        { target => 'http://example.com/another-reply-target' } );
+    is( length $wm->author_photo_hash, 64, 'Author photo hash has a value.' );
+
 }
 
 {
@@ -56,6 +61,9 @@ done_testing();
 
 sub initialize_tests {
     foreach my $child ( path("$FindBin::Bin/run")->children ) {
-        try { $child->remove_tree };
+        unless ( $child->basename =~ /^\./ ) {
+            try { $child->remove_tree };
+        }
     }
+    mkdir "$FindBin::Bin/run/images";
 }
