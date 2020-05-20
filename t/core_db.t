@@ -32,4 +32,21 @@ subtest "Invalid Whim::Core data initialization" => sub {
         "dies if data_directory cannot be coerced to a Path::Tiny";
 };
 
+subtest "Whim::Core in-memory database" => sub {
+    plan tests => 4;
+
+    ok my $transient_db = $Whim::Core::TRANSIENT_DB,
+        '$Whim::Core::TRANSIENT_DB constant is defined';
+
+    my $whim = new_ok
+        "Whim::Core" => [ { data_directory => $transient_db } ],
+        'succeeds if data_directory set to $Whim::Core::TRANSIENT_DB';
+
+    my $expected_absence = "$transient_db/wm.db";
+    ok( Path::Tiny->new($expected_absence)->assert( sub { !$_->exists } ),
+        "Whim::Core didn't create a file for the in-memory database"
+    );
+
+    isa_ok $whim->dbh(), "DBI::db", "whim database handle";
+};
 done_testing();
