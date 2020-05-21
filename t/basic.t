@@ -9,7 +9,10 @@ use Path::Tiny;
 use Try::Tiny;
 
 use lib "$FindBin::Bin/../lib";
-use_ok("Whim::Core");
+
+BEGIN {
+  use_ok("Whim::Core");
+};
 
 initialize_tests();
 

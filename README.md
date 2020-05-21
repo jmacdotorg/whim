@@ -37,7 +37,7 @@ $ cpanm --installdeps --with-develop .
 And `prove` for the tests!
 
 ``` shell-session
-$ prove t/ xt/
+$ prove -l t/ xt/
 ⋮
 Result: PASS
 ```
