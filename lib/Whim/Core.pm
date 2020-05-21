@@ -16,6 +16,8 @@ use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
 
 use Whim::Mention;
 
+# Specifying $TRANSIENT_DB for data_directory tells SQLite to use an in-memory database rather than persist to disk.
+# Helpful for automated tests and maybe future non-persistent uses of whim
 our $TRANSIENT_DB = ":memory:";
 
 has 'data_directory' => (
