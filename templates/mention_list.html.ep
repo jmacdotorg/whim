@@ -1,0 +1,34 @@
+% if ($webmentions->{$type} ) {
+%     for my $wm ( $webmentions->{$type}->@* ) {
+    <div class="media">
+        <div class="media-left">
+            % if ($wm->author) {
+            <a rel="nofollow" href="<%= $wm->author->url %>">
+            <img class="media-object" src="/data/images/<%= $wm->author_photo_hash || '/data/images/comment.png' %>" alt="<%= $wm->author->name %>" style="max-width:32px; max-height:32px;">
+            </a>
+            % }
+            % else {
+            <a rel="nofollow" href="<%= $wm->original_source %>">
+            <img class="media-object" src="/data/images/comment.png" alt="A generic word balloon" style="max-width:32px; max-height:32px;">
+            </a>
+            % }
+        </div>
+        <div class="media-body">
+            % if ($wm->author) {
+            <h4 class="media-heading"><a href="<%= $wm->author->url %>"><%= $wm->author->name %></a></h4>
+            % }
+            % else {
+            <h4 class="media-heading"><a href="<%= $wm->original_source %>"><%= $wm->original_source %></a></h4>
+            % }
+                % if ( ($type eq 'mention') && ($wm->title ne $wm->content) ) {
+                <p><strong><%= $wm->title %></strong></p>
+                % }
+                <%= $wm->content %> <a rel="nofollow" href="<%= $wm->original_source %>"><span class="glyphicon glyphicon-share" style="text-decoration:none; color:black;"></a>
+        </div>
+    </div>
+%       }
+% }
+% else {
+    (None yet!)
+% }
+
