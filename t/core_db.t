@@ -11,7 +11,7 @@ use lib "$FindBin::Bin/../lib";
 use Whim::Core;
 
 subtest "Normal Whim::Core data initialization" => sub {
-    plan tests => 2;
+    plan tests => 3;
 
     # See DBD::SQLite: Using tempdir may confuse macOS file locks
     my $db_dir = Path::Tiny->tempdir( EXLOCK => 0 );
@@ -21,7 +21,7 @@ subtest "Normal Whim::Core data initialization" => sub {
         "succeeds if data_directory exists";
 
     isa_ok $whim->dbh(), "DBI::db", "whim database handle";
-
+    isa_ok $whim->image_directory, "Path::Tiny", "whim image directory";
 };
 
 subtest "Invalid Whim::Core data initialization" => sub {
@@ -33,7 +33,7 @@ subtest "Invalid Whim::Core data initialization" => sub {
 };
 
 subtest "Whim::Core in-memory database" => sub {
-    plan tests => 4;
+    plan tests => 5;
 
     ok my $transient_db = $Whim::Core::TRANSIENT_DB,
         '$Whim::Core::TRANSIENT_DB constant is defined';
@@ -48,5 +48,6 @@ subtest "Whim::Core in-memory database" => sub {
     );
 
     isa_ok $whim->dbh(), "DBI::db", "whim database handle";
+    isa_ok $whim->image_directory, "Path::Tiny", "whim image directory";
 };
 done_testing();

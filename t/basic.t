@@ -11,8 +11,8 @@ use Try::Tiny;
 use lib "$FindBin::Bin/../lib";
 
 BEGIN {
-  use_ok("Whim::Core");
-};
+    use_ok("Whim::Core");
+}
 
 initialize_tests();
 

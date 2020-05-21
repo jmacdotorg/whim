@@ -279,6 +279,9 @@ sub _build_dbh( $self ) {
 }
 
 sub _build_image_directory( $self ) {
+    return Path::Tiny->tempdir( EXLOCK => 0 )
+        if $self->data_directory eq $TRANSIENT_DB;
+
     return $self->data_directory->child($IMAGEDIR_NAME);
 }
 
