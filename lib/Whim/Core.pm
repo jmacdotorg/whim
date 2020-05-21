@@ -16,9 +16,15 @@ use lib '/Users/jmac/Documents/Plerd/indieweb/webmention-perl/lib';
 
 use Whim::Mention;
 
+# Specifying $TRANSIENT_DB for data_directory tells SQLite to use an in-memory database rather than persist to disk.
+# Helpful for automated tests and maybe future non-persistent uses of whim
+our $TRANSIENT_DB = ":memory:";
+
 has 'data_directory' => (
     is  => 'ro',
     isa => sub {
+
+        # $TRANSIENT_DB can be coerced to a Path::Tiny, so this check still works.
         die "data_directory must be a valid path or Path::Tiny object\n"
             unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') );
     },
@@ -254,24 +260,30 @@ sub receive_webmention ( $self, $wm ) {
 }
 
 sub _build_dbh( $self ) {
-    my $dir = $self->data_directory;
+    my $dir                     = $self->data_directory;
+    my $db_needs_initialization = 1;
+    my $db_file;
 
-    my $db_file                 = $dir->child('wm.db');
-    my $db_file_already_existed = 1 if -e $db_file;
-
-    my $dbh = DBI->connect( "dbi:SQLite:dbname=$dir/wm.db", "", "" );
-    if ($dbh) {
-        unless ($db_file_already_existed) {
-            _initialize_database($dbh);
-        }
-        return $dbh;
+    if ( $dir eq $TRANSIENT_DB ) {
+        $db_file = $dir;
     }
     else {
-        die "Can't create or use a database file in $dir: $DBI::errtr\n";
+        $db_file                 = $dir->child('wm.db');
+        $db_needs_initialization = 0 if $db_file->exists;
     }
+
+    my $dbh = DBI->connect( "dbi:SQLite:$db_file", "", "" )
+        or die "Can't create or use a database file in $dir: $DBI::errtr\n";
+
+    _initialize_database($dbh) if $db_needs_initialization;
+
+    return $dbh;
 }
 
 sub _build_image_directory( $self ) {
+    return Path::Tiny->tempdir( EXLOCK => 0 )
+        if $self->data_directory eq $TRANSIENT_DB;
+
     return $self->data_directory->child($IMAGEDIR_NAME);
 }
 

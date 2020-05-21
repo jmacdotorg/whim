@@ -24,6 +24,24 @@ __If you are still curious about Whim__, by all means check it out and [give me 
 
 You may also wish to join the [\#whim channel on Freenode IRC](http://webchat.freenode.net/?channels=%23whim), where I am likely idling but listening as `jmac`.
 
+## Building and testing whim locally
+
+[App::cpanminus]: https://metacpan.org/pod/App::cpanminus
+
+Use the CPAN or [App::cpanminus][] tools to install dependencies.
+
+``` shell-session
+$ cpanm --installdeps --with-develop .
+```
+
+And `prove` for the tests!
+
+``` shell-session
+$ prove -l t/ xt/
+⋮
+Result: PASS
+```
+
 ## Running whim
 
 The `whim` executable accepts the following subcommands. Some fine day, they may actually have documentation.
