@@ -1,6 +1,7 @@
 package Whim::Controller::Listen;
 use Mojo::Base 'Mojolicious::Controller';
 use Whim::Mention;
+use Try::Tiny;
 
 use Readonly;
 Readonly my $OK          => 200;
