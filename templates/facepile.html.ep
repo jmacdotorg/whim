@@ -1,6 +1,6 @@
 % if ($webmentions->{$type} ) {
 %     for my $wm ( $webmentions->{$type}->@* ) {
-          <a href="<%= $wm->original_source %>"><div style="height:32px; width:32px; margin: 1px; display:inline-block"><img class="facepile" src="/data/images/<%= $wm->author_photo_hash %>" alt="<%= $wm->author->name %> avatar" style="max-width:32px; max-height:32px; margin-left:auto; margin-right:auto;"></div></a>
+          <a href="<%= $wm->author->url %>"><div style="height:32px; width:32px; margin: 1px; display:inline-block"><img class="facepile" src="/author_photos/<%= $wm->author_photo_hash %>" alt="<%= $wm->author->name %> avatar" style="max-width:32px; max-height:32px; margin-left:auto; margin-right:auto;"></div></a>
 %     }
 % }
 % else {

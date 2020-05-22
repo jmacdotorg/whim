@@ -4,12 +4,12 @@
         <div class="media-left">
             % if ($wm->author) {
             <a rel="nofollow" href="<%= $wm->author->url %>">
-            <img class="media-object" src="/data/images/<%= $wm->author_photo_hash || '/data/images/comment.png' %>" alt="<%= $wm->author->name %>" style="max-width:32px; max-height:32px;">
+            <img class="media-object" src="/author_photos/<%= $wm->author_photo_hash || '/images/comment.png' %>" alt="<%= $wm->author->name %>" style="max-width:32px; max-height:32px;">
             </a>
             % }
             % else {
             <a rel="nofollow" href="<%= $wm->original_source %>">
-            <img class="media-object" src="/data/images/comment.png" alt="A generic word balloon" style="max-width:32px; max-height:32px;">
+            <img class="media-object" src="/images/comment.png" alt="A generic word balloon" style="max-width:32px; max-height:32px;">
             </a>
             % }
         </div>
