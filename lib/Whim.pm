@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious';
 
 use Whim::Core;
 use Try::Tiny;
+use Path::Tiny;
 
 use Readonly;
 Readonly my $OK          => 200;
@@ -14,11 +15,17 @@ our $VERSION = '2020.05.18.00';
 sub startup {
     my $self = shift;
 
+    my $config = $self->plugin(
+        'Config',
+        {   default =>
+                { data_directory => path( $ENV{HOME} )->child('.whim') },
+        }
+    );
+
     push @{ $self->commands->namespaces }, 'Whim::Command';
     $self->helper(
         whim => sub {
-            state $whim = Whim::Core->new(
-                { data_directory => "$FindBin::Bin/../data" } );
+            state $whim = Whim::Core->new($config);
         }
     );
 
