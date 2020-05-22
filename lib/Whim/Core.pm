@@ -30,7 +30,7 @@ has 'data_directory' => (
     },
     required => 1,
     coerce   => sub { path( $_[0] ) },
-    trigger => sub {
+    trigger  => sub {
         my ( $self, $dir ) = @_;
         return if $dir eq $TRANSIENT_DB;
         unless ( -e $dir ) {
