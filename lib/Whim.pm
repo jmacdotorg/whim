@@ -13,7 +13,11 @@ sub startup {
     $self->helper(
         whim => sub {
             state $whim = Whim::Core->new(
-                { data_directory => "$FindBin::Bin/../data" } );
+                {   data_directory => "$FindBin::Bin/../data",
+                    author_photo_directory =>
+                        "$FindBin::Bin/../public/author_photos",
+                }
+            );
         }
     );
 
