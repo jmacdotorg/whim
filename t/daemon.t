@@ -53,5 +53,9 @@ sub set_up_app {
                 $t->app->home->child('public')->child('author_photos')
         }
     );
-    $t->app->whim($whim);
+    $t->app->helper( whim => sub {$whim} );
+
+    # Erase any previously downloaded author photos.
+    $t->app->home->child('public')->child('author_photos')
+        ->list->each( sub { $_->remove } );
 }
