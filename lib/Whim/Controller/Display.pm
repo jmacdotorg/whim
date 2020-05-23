@@ -12,8 +12,6 @@ sub display {
 
     my $url = $self->param('url');
 
-    warn "url: $url\n";
-
     unless ($url) {
         $self->render(
             status => $BAD_REQUEST,
