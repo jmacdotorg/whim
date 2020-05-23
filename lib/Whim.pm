@@ -2,7 +2,6 @@ package Whim;
 use Mojo::Base 'Mojolicious';
 
 use Whim::Core;
-use Try::Tiny;
 
 our $VERSION = '2020.05.18.00';
 
