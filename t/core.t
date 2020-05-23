@@ -17,7 +17,11 @@ BEGIN {
 initialize_tests();
 
 diag("Create Whim object");
-my $whim = Whim::Core->new( { data_directory => $Whim::Core::TRANSIENT_DB } );
+my $whim = Whim::Core->new(
+    {   data_directory         => $Whim::Core::TRANSIENT_DB,
+        author_photo_directory => "$FindBin::Bin/public/author_photos",
+    }
+);
 
 {
     my $count = $whim->fetch_webmentions( {} );

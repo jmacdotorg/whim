@@ -34,7 +34,11 @@ has 'data_directory' => (
 
 has 'dbh' => ( is => 'lazy', );
 
-has 'image_directory' => ( is => 'lazy', );
+has 'author_photo_directory' => (
+    is       => 'ro',
+    required => 1,
+    coerce   => sub { path( $_[0] ) },
+);
 
 has 'ua' => (
     is      => 'ro',
@@ -280,17 +284,10 @@ sub _build_dbh( $self ) {
     return $dbh;
 }
 
-sub _build_image_directory( $self ) {
-    return Path::Tiny->tempdir( EXLOCK => 0 )
-        if $self->data_directory eq $TRANSIENT_DB;
-
-    return $self->data_directory->child($IMAGEDIR_NAME);
-}
-
 sub _process_author_photo_tx ( $self, $response ) {
     if ( $response->is_success ) {
         my $photo_hash = sha256_hex( $response->decoded_content );
-        my $photo_file = $self->image_directory->child($photo_hash);
+        my $photo_file = $self->author_photo_directory->child($photo_hash);
         unless ( -e $photo_file ) {
             $photo_file->spew( $response->decoded_content );
         }

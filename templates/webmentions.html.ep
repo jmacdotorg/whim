@@ -1,0 +1,17 @@
+<h3 id="webmentions">Responses from around the web...</h3>
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>Likes</h4>
+            %= include 'facepile', type => 'like'
+        </div>
+        <div class="col-xs-6">
+            <h4>Reposts</h4>
+            %= include 'facepile', type => 'repost'
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                %= include 'responses'
+            </div>
+        </div>
+    </div>
+
