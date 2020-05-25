@@ -14,10 +14,9 @@ my $whim;
 sub run {
     my ( $self, @args ) = @_;
     GetOptionsFromArray(
-        \@args,    \%options,   'before=s', 'after=s',
-        'on=s',    'source=s@', 'target=s', 'not-source=s@',
-        'process', 'count',     'block',    'list',
-        'unblock',
+        \@args,  \%options,   'before=s', 'after=s',
+        'on=s',  'source=s@', 'target=s', 'not-source=s@',
+        'count', 'block',     'list',     'unblock',
     );
 
     massage_options();
@@ -57,17 +56,6 @@ sub run {
 
     if ( $options{count} ) {
         say "Matching webmentions: " . scalar @wms;
-    }
-    elsif ( $options{process} ) {
-        if (@wms) {
-            say "Verifying " . scalar @wms . " webmentions...";
-            my $verified_count = $whim->process_webmentions;
-            my $s              = $verified_count == 1 ? '' : 's';
-            say "\n$verified_count webmention${s} passed verification.";
-        }
-        else {
-            say "No unverified webmentions to process.";
-        }
     }
     else {
         display_wms(@wms);

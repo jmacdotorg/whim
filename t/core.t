@@ -46,7 +46,7 @@ my $whim = Whim::Core->new(
 {
     diag("Webmention verification");
     my $count = $whim->process_webmentions;
-    is( $count, 7, "Processed expected number of stored webmentions." );
+    is( $count->[0], 7, "Processed expected number of stored webmentions." );
 
     $count = $whim->fetch_webmentions( {} );
 
