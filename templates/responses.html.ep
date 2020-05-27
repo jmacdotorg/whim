@@ -1,0 +1,5 @@
+<h4>Replies</h4>
+%= include 'mention_list', type=>'reply'
+<h4>Other webpages that mention this post</h4>
+%= include 'mention_list', type=>'mention'
+
