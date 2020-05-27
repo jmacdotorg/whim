@@ -171,7 +171,8 @@ sub fetch_webmentions ( $self, $args ) {
 
         # Delete keys that, if undef, we want the webmention object to
         # lazily re-derive
-        foreach (qw(time_verified is_verified original_source content title))
+        foreach (
+            qw(time_verified is_verified original_source content title type))
         {
             delete $args{$_} unless defined $args{$_};
         }
