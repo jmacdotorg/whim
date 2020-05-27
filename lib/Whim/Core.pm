@@ -279,8 +279,9 @@ sub _build_dbh( $self ) {
         $db_needs_initialization = 0 if $db_file->exists;
     }
 
-    my $dbh = DBI->connect( "dbi:SQLite:$db_file", "", "" )
-        or die "Can't create or use a database file in $dir: $DBI::errtr\n";
+    my $dbh =
+        DBI->connect( "dbi:SQLite:$db_file", "", "", { sqlite_unicode => 1, },
+        ) or die "Can't create or use a database file in $dir: $DBI::errtr\n";
 
     _initialize_database($dbh) if $db_needs_initialization;
 
