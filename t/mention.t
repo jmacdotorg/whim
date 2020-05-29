@@ -16,16 +16,15 @@ use Path::Tiny;
     diag("Send lots of webmentions based on one page");
 
     my $wm_file = path("$FindBin::Bin/source/many_wms.html");
-    my @wms = Whim::Mention->new_from_source(
-        'file://' . $wm_file->absolute,
-    );
+    my @wms =
+        Whim::Mention->new_from_source( 'file://' . $wm_file->absolute, );
 
-    is (scalar @wms, 6, "Extracted expected webmentions from source doc.");
+    is( scalar @wms, 6, "Extracted expected webmentions from source doc." );
 
     throws_ok(
-        sub{
+        sub {
             my $wm_file = path("$FindBin::Bin/source/no_content.html");
-            my @wms = Whim::Mention->new_from_source(
+            my @wms     = Whim::Mention->new_from_source(
                 'file://' . $wm_file->absolute,
             );
         },

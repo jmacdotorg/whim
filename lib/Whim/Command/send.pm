@@ -21,11 +21,11 @@ sub run {
         return $self->_send_one_wm( $source, $target );
     }
     else {
-        return $self->_send_many_wms( $source );
+        return $self->_send_many_wms($source);
     }
 }
 
-sub _send_one_wm( $self, $source, $target ) {
+sub _send_one_wm ( $self, $source, $target ) {
 
     my $wm = Whim::Mention->new( { source => $source, target => $target } );
 
@@ -39,11 +39,11 @@ sub _send_one_wm( $self, $source, $target ) {
     }
 }
 
-sub _send_many_wms( $self, $source ) {
+sub _send_many_wms ( $self, $source ) {
 
     my @wms;
     try {
-        @wms = Whim::Mention->new_from_source( $source );
+        @wms = Whim::Mention->new_from_source($source);
     }
     catch {
         if (/lacks/) {
@@ -63,8 +63,8 @@ sub _send_many_wms( $self, $source ) {
 
     my $attempt_count = scalar(@wms);
 
-    my $attempt_s = $attempt_count == 1? '' : 's';
-    my $success_s = $success_count == 1? '' : 's';
+    my $attempt_s = $attempt_count == 1 ? '' : 's';
+    my $success_s = $success_count == 1 ? '' : 's';
 
     say "Sent $success_count webmention$success_s "
         . "(from $attempt_count attempt$attempt_s)";
