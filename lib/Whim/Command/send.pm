@@ -46,12 +46,8 @@ sub _send_many_wms ( $self, $source ) {
         @wms = Whim::Mention->new_from_source($source);
     }
     catch {
-        if (/lacks/) {
-            chomp;
-            say "Can't determine the content of the source document, so "
-                . "declining to send any webmentions. ($_)";
-        }
-        return;
+        chomp;
+        say "Cannot send any webmentions: $_";
     };
 
     my $success_count = 0;
