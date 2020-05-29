@@ -6,6 +6,7 @@ requires "FindBin";
 requires "LWP::UserAgent";
 requires "Mojolicious";
 requires "Moo";
+requires "MooX::ClassAttribute";
 requires "Path::Tiny";
 requires "Readonly";
 requires "Scalar::Util";
