@@ -2,10 +2,9 @@ package Whim::Command::listen;
 use Mojo::Base 'Mojolicious::Command';
 
 use Mojo::Server::Hypnotoad;
-use Mojo::Util qw(getopt);
 
-has description => 'bleep';
-has usage       => sub { shift->extract_usage };
+has description => 'Listen for incoming webmentions (and other HTTP requests)';
+has usage       => 'XXX Fill me in later XXX';
 
 use Getopt::Long qw(GetOptionsFromArray);
 my %options;
