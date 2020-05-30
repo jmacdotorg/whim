@@ -3,8 +3,9 @@ use Mojo::Base 'Mojolicious::Command';
 
 use Mojo::Server::Hypnotoad;
 
-has description => 'Listen for incoming webmentions (and other HTTP requests)';
-has usage       => 'XXX Fill me in later XXX';
+has description =>
+    'Listen for incoming webmentions (and other HTTP requests)';
+has usage => 'XXX Fill me in later XXX';
 
 use Getopt::Long qw(GetOptionsFromArray);
 my %options;
