@@ -305,7 +305,9 @@ sub _process_author_photo_tx ( $self, $response ) {
 sub _initialize_database( $dbh ) {
     my @statements = (
         "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, content text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128), author_photo_hash char(128), title char(255))",
+        "CREATE UNIQUE INDEX source_target on wm(source, target)",
         "CREATE TABLE block (source char(128))",
+        "CREATE UNIQUE INDEX source on block(source)",
     );
 
     foreach (@statements) {
