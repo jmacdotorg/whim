@@ -44,7 +44,7 @@ sub set_up_app {
     my ($t) = @_;
 
     # Reset the application home to the test directory
-    $t->app->home( $t->app->home->child('t') );
+    $t->app->home( $t->app->home->child('../../t') );
 
     # Swap out the app's Whim::Core object with our own test-friendly one
     my $whim = Whim::Core->new(

@@ -10,7 +10,7 @@ sub startup {
     my $self = shift;
 
     # Switch to installable home directory
-    $self->home(Mojo::Home->new(curfile->sibling('Whim')));
+    $self->home( Mojo::Home->new( curfile->sibling('Whim') ) );
 
     # Switch to installable "public" directory
     $self->static->paths->[0] = $self->home->child('public');
