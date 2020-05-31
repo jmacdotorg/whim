@@ -178,7 +178,8 @@ sub fetch_webmentions ( $self, $args ) {
 
         # Delete keys that, if undef, we want the webmention object to
         # lazily re-derive
-        foreach (qw(time_verified is_verified original_source content title))
+        foreach (
+            qw(time_verified is_verified original_source content title type))
         {
             delete $args{$_} unless defined $args{$_};
         }
@@ -285,8 +286,9 @@ sub _build_dbh( $self ) {
         $db_needs_initialization = 0 if $db_file->exists;
     }
 
-    my $dbh = DBI->connect( "dbi:SQLite:$db_file", "", "" )
-        or die "Can't create or use a database file in $dir: $DBI::errtr\n";
+    my $dbh =
+        DBI->connect( "dbi:SQLite:$db_file", "", "", { sqlite_unicode => 1, },
+        ) or die "Can't create or use a database file in $dir: $DBI::errtr\n";
 
     _initialize_database($dbh) if $db_needs_initialization;
 
@@ -310,7 +312,9 @@ sub _process_author_photo_tx ( $self, $response ) {
 sub _initialize_database( $dbh ) {
     my @statements = (
         "CREATE TABLE wm (source char(128), original_source char(128), target char(128), time_received text, is_verified int, is_tested int, html text, content text, time_verified text, type char(16), author_name char(64), author_url char(128), author_photo char(128), author_photo_hash char(128), title char(255))",
+        "CREATE UNIQUE INDEX source_target on wm(source, target)",
         "CREATE TABLE block (source char(128))",
+        "CREATE UNIQUE INDEX source on block(source)",
     );
 
     foreach (@statements) {

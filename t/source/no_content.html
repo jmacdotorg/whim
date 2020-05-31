@@ -3,11 +3,16 @@
 <title>This page contains links with various microformats attached.</title>
 </head>
 
+<!--
+This page is like many_wms.html, but it has no e-content microformat.
+Trying to mass-fetch webmentions from it via Whim::Mention->new_from_source
+should throw an exception.
+-->
+
 <div class="h-entry">
 
 <p class="h-card p-author">Some links by <span class="p-name">Alice Nobody</span>.<data class="u-url" value="http://alice.example"></data><data class="u-photo" value="edith.jpg"></data></p>
 
-<div class="e-content">
 <p>
 <a href="http://example.com/reply-target" class="u-in-reply-to">A reply.</a>
 </p>
@@ -31,7 +36,6 @@
 <p>
 <a href="http://example.com/repost-target" class="u-repost-of">A repost.</a>
 </p>
-</div> <!-- end of e-content div -->
 
 <div class="h-cite u-in-reply-to">
     <p><a class="p-author h-card">Edith Example</a>
