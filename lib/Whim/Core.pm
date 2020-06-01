@@ -44,7 +44,15 @@ has 'dbh' => ( is => 'lazy', );
 has 'author_photo_directory' => (
     is       => 'ro',
     required => 1,
-    coerce   => sub { path( $_[0] ) },
+    isa      => sub {
+        unless ( -e $_[0] ) {
+            die "No author photo directory at $_[0]\n";
+        }
+        unless ( -w $_[0] ) {
+            die "Author photo directory not writeable at $_[0]\n";
+        }
+    },
+    coerce => sub { path( $_[0] ) },
 );
 
 has 'ua' => (
@@ -323,3 +331,21 @@ sub _initialize_database( $dbh ) {
 }
 
 1;
+
+=head1 NAME
+
+Whim::Core - A code library used by the Whim webmention multitool
+
+=head1 DESCRIPTION
+
+This is a code library used by the C<whim> executable. It doesn't have a
+public interface!
+
+=head1 SEE ALSO
+
+L<whim>
+
+=head1 AUTHOR
+
+Jason McIntosh E<lt>jmac@jmac.orgE<gt>
+
