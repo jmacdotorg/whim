@@ -4,6 +4,8 @@ use Mojo::Base 'Mojolicious';
 use Mojo::File qw(curfile);
 use Whim::Core;
 
+use Path::Tiny;
+
 our $VERSION = '2020.05.18.00';
 
 sub startup {
@@ -18,17 +20,22 @@ sub startup {
     # Switch to installable "templates" directory
     $self->renderer->paths->[0] = $self->home->child('templates');
 
+    my $config = $self->plugin(
+        'Config',
+        {   default => {
+                data_directory => path( $ENV{HOME} )->child('.whim'),
+                author_photo_directory =>
+                    $self->home->child('public')->child('author_photos'),
+            },
+        }
+    );
+
     push @{ $self->commands->namespaces }, 'Whim::Command';
 
     # Create a 'whim' helper containing our Whim::Core object
     $self->helper(
         whim => sub {
-            state $whim = Whim::Core->new(
-                {   data_directory => $self->home->child('data'),
-                    author_photo_directory =>
-                        $self->home->child('public')->child('author_photos'),
-                }
-            );
+            state $whim = Whim::Core->new($config);
         }
     );
 
