@@ -48,3 +48,21 @@ sub new_from_source {
 }
 
 1;
+
+=head1 NAME
+
+Whim::Mention - A code library used by the Whim webmention multitool
+
+=head1 DESCRIPTION
+
+This is a code library used by the C<whim> executable. It doesn't have a
+public interface!
+
+=head1 SEE ALSO
+
+L<whim>
+
+=head1 AUTHOR
+
+Jason McIntosh E<lt>jmac@jmac.orgE<gt>
+

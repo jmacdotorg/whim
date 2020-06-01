@@ -2,7 +2,7 @@ use Test::More;
 use Test::Mojo;
 use Whim::Core;
 use FindBin;
-use Path::Tiny;
+use Mojo::File qw(path);
 
 my $t = Test::Mojo->new('Whim');
 
@@ -17,7 +17,7 @@ $t->get_ok('/')->status_is(200)->content_like(qr/OK/);
 my $wm_file = path("$FindBin::Bin/source/many_wms.html");
 
 my @wms = Web::Mention->new_from_html(
-    source => 'file://' . $wm_file->absolute,
+    source => 'file://' . $wm_file->to_abs,
     html   => $wm_file->slurp,
 );
 
@@ -44,7 +44,10 @@ sub set_up_app {
     my ($t) = @_;
 
     # Reset the application home to the test directory
-    $t->app->home( $t->app->home->child('../../t') );
+    $t->app->home( path($FindBin::Bin) );
+
+    # Reset the template directory too
+    $t->app->renderer->paths->[0] = $t->app->home->child('templates');
 
     # Swap out the app's Whim::Core object with our own test-friendly one
     my $whim = Whim::Core->new(
