@@ -50,7 +50,7 @@ B<If you want to start receiving webmentions right now>, please check out Aaron 
 
 B<If you are still curious about Whim>, by all means check it out and L<give me a holler|mailto:jmac@jmac.org> if you'd like. I'd be happy to answer any questions about this project or L<my other IndieWeb work|https://indieweb.org/User:Jmac.org>.
 
-You may also wish to join the L<#whim channel on Freenode IRC|http://webchat.freenode.net/?channels=%23whim>, where I am likely idling but listening as C<jmac>.
+You may also wish to join the L<"#whim" channel on Freenode IRC|http://webchat.freenode.net/?channels=%23whim>, where I am likely idling but listening as C<jmac>.
 
 
 =head2 Building and testing whim locally
@@ -105,7 +105,7 @@ Two possible explanations:
 
 =item 1.
 
-It stands for L<B<whi>B<m>atter|https://en.wikipedia.org/wiki/White_matter>, the connective tissue betweeen separate neurological structures in the human brain. Its function resembles Webmention's role in allowing independent websites to communicate, and thus helping their respective authors to collaborate.
+It stands for L<B<whi>te B<m>atter|https://en.wikipedia.org/wiki/White_matter>, the connective tissue betweeen separate neurological structures in the human brain. Its function resembles Webmention's role in allowing independent websites to communicate, and thus helping their respective authors to collaborate.
 
 
 
