@@ -1,0 +1,125 @@
+=encoding utf8
+
+
+=head1 Whim
+
+Whim is a command-line utility for sending, receiving, and working with L<webmentions|https://www.w3.org/TR/webmention/>.
+
+Notable features (both real and I<graspably aspirational>) include:
+
+=over
+
+=item *
+
+A daemon to receive and store incoming webmentions
+
+
+
+=item *
+
+A webmention verifier, suitable for scheduled operation
+
+
+
+=item *
+
+A tool for sending webmentions, individually or en masse (given a source URL)
+
+
+
+=item *
+
+Commands to query a local database of received webmentions, with both JSON and human-readable output modes
+
+
+
+=item *
+
+A simple webserver to display webmention-powered comment sections as HTML, suitable for JavaScript-driven insertion into an otherwise static webpage
+
+
+
+=back
+
+
+=head2 Not really usable yet (but webmention.io is)
+
+I<This software is pre-alpha> and has no documentation, incomplete test coverage, and inflexible configuration. I hope to continue improving this work over the course of 2020. L<See the project's Issues tracker for ongoing status updates.|https://github.com/jmacdotorg/whim/milestone/1>
+
+B<If you want to start receiving webmentions right now>, please check out Aaron Parecki's most excellent L<Webmention.io|https://webmention.io>, a free hosted service that you can start using right away, with any web page. (It is also an open-source project.)
+
+B<If you are still curious about Whim>, by all means check it out and L<give me a holler|mailto:jmac@jmac.org> if you'd like. I'd be happy to answer any questions about this project or L<my other IndieWeb work|https://indieweb.org/User:Jmac.org>.
+
+You may also wish to join the L<#whim channel on Freenode IRC|http://webchat.freenode.net/?channels=%23whim>, where I am likely idling but listening as C<jmac>.
+
+
+=head2 Building and testing whim locally
+
+Use the CPAN or L<App::cpanminus|https://metacpan.org/pod/App::cpanminus> tools to install dependencies.
+
+ shell-session
+ $ cpanm --installdeps --with-develop .
+
+
+And C<prove> for the tests!
+
+ shell-session
+ $ prove -l t/ xt/
+ ⋮
+ Result: PASS
+
+
+
+=head2 Running whim
+
+The C<whim> executable accepts the following subcommands. Some fine day, they may actually have documentation.
+
+=over
+
+=item *
+
+C<daemon>: Run a daemon that listens for incoming webmentions and stores them in a local database
+
+
+
+=item *
+
+C<send>: Send a webmention
+
+
+
+=item *
+
+C<query>: Query a local database for stored webmentions meeting given criteria
+
+
+
+=back
+
+
+=head2 "Whim"?
+
+Two possible explanations:
+
+=over
+
+=item 1.
+
+It stands for L<B<whi>B<m>atter|https://en.wikipedia.org/wiki/White_matter>, the connective tissue betweeen separate neurological structures in the human brain. Its function resembles Webmention's role in allowing independent websites to communicate, and thus helping their respective authors to collaborate.
+
+
+
+=item 2.
+
+Whim puts the I<hi!> in B<w>ebB<m>entions.
+
+
+
+=back
+
+
+=head2 Copyright and licence
+
+This software is Copyright (c) 2020 by Jason McIntosh.
+
+This is free software, licensed under the MIT License.
