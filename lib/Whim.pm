@@ -11,24 +11,16 @@ our $VERSION = '2020.05.18.00';
 sub startup {
     my $self = shift;
 
-    # Switch to installable home directory
-    $self->home( Mojo::Home->new( curfile->sibling('Whim') ) );
-
-    # Switch to installable "public" directory
-    $self->static->paths->[0] = $self->home->child('public');
-
-    # Switch to installable "templates" directory
-    $self->renderer->paths->[0] = $self->home->child('templates');
-
-    my $config = $self->plugin(
-        'Config',
-        {   default => {
-                data_directory => path( $ENV{HOME} )->child('.whim'),
-                author_photo_directory =>
-                    $self->home->child('public')->child('author_photos'),
-            },
-        }
+    # Switch the app's home to ~/.whim/
+    # (overridable by environment variable)
+    $self->home(
+        Mojo::Home->new(
+            path( $ENV{WHIM_HOME} // $ENV{HOME} )->child('.whim')
+        )
     );
+
+    my $config =
+        $self->plugin( 'Config', { default => { home => $self->home, }, } );
 
     push @{ $self->commands->namespaces }, 'Whim::Command';
 
@@ -37,6 +29,21 @@ sub startup {
         whim => sub {
             state $whim = Whim::Core->new($config);
         }
+    );
+
+    # Set up docroot and template paths.
+    # For both, the first place to look is the app home, and then using
+    # the library directory as a fallback.
+    $self->static->paths(
+        [   $self->home->child('public'),
+            curfile->sibling('Whim')->child('public'),
+        ]
+    );
+
+    $self->renderer->paths(
+        [   $self->home->child('templates'),
+            curfile->sibling('Whim')->child('templates'),
+        ]
     );
 
     # Set up routes for the listener

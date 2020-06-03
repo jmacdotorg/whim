@@ -20,17 +20,27 @@ use Whim::Mention;
 # Helpful for automated tests and maybe future non-persistent uses of whim
 our $TRANSIENT_DB = ":memory:";
 
+has 'home' => (
+    is      => 'lazy',
+    coerce  => sub { path( $_[0] ) },
+    trigger => sub {
+        my ( $self, $dir ) = @_;
+        unless ( -e $dir ) {
+            mkdir $dir or die "Can't mkdir Whim home $dir: $!\n";
+        }
+    },
+);
+
 has 'data_directory' => (
-    is  => 'ro',
+    is  => 'lazy',
     isa => sub {
 
         # $TRANSIENT_DB can be coerced to a Path::Tiny, so this check still works.
         die "data_directory must be a valid path or Path::Tiny object\n"
             unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') );
     },
-    required => 1,
-    coerce   => sub { path( $_[0] ) },
-    trigger  => sub {
+    coerce  => sub { path( $_[0] ) },
+    trigger => sub {
         my ( $self, $dir ) = @_;
         return if $dir eq $TRANSIENT_DB;
         unless ( -e $dir ) {
@@ -42,9 +52,8 @@ has 'data_directory' => (
 has 'dbh' => ( is => 'lazy', );
 
 has 'author_photo_directory' => (
-    is       => 'ro',
-    required => 1,
-    isa      => sub {
+    is  => 'lazy',
+    isa => sub {
         unless ( -e $_[0] ) {
             die "No author photo directory at $_[0]\n";
         }
@@ -301,6 +310,18 @@ sub _build_dbh( $self ) {
     _initialize_database($dbh) if $db_needs_initialization;
 
     return $dbh;
+}
+
+sub _build_home( $self ) {
+    return path( $ENV{HOME} )->child('.whim');
+}
+
+sub _build_data_directory( $self ) {
+    return $self->home->child('data');
+}
+
+sub _build_author_photo_directory( $self ) {
+    return $self->home->child('public')->child('author_photos');
 }
 
 sub _process_author_photo_tx ( $self, $response ) {

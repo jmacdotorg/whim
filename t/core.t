@@ -18,8 +18,8 @@ initialize_tests();
 
 diag("Create Whim object");
 my $whim = Whim::Core->new(
-    {   data_directory         => $Whim::Core::TRANSIENT_DB,
-        author_photo_directory => "$FindBin::Bin/public/author_photos",
+    {   data_directory => $Whim::Core::TRANSIENT_DB,
+        home           => "$FindBin::Bin",
     }
 );
 

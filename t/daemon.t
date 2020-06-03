@@ -4,6 +4,10 @@ use Whim::Core;
 use FindBin;
 use Mojo::File qw(path);
 
+BEGIN {
+    $ENV{WHIM_HOME} = $FindBin::Bin;
+}
+
 my $t = Test::Mojo->new('Whim');
 
 # Initialize the app with test-specific config,
@@ -52,8 +56,7 @@ sub set_up_app {
     # Swap out the app's Whim::Core object with our own test-friendly one
     my $whim = Whim::Core->new(
         {   data_directory => $Whim::Core::TRANSIENT_DB,
-            author_photo_directory =>
-                $t->app->home->child('public')->child('author_photos')
+            home           => $FindBin::Bin,
         }
     );
     $t->app->helper( whim => sub {$whim} );

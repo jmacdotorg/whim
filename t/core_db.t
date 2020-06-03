@@ -18,8 +18,8 @@ subtest "Normal Whim::Core data initialization" => sub {
 
     my $whim = new_ok
         "Whim::Core" => [
-        {   data_directory         => $db_dir,
-            author_photo_directory => "$FindBin::Bin/public/author_photos",
+        {   data_directory => $db_dir,
+            home           => "$FindBin::Bin",
         }
         ],
         "succeeds if data_directory exists";
@@ -50,8 +50,8 @@ subtest "Whim::Core in-memory database" => sub {
 
     my $whim = new_ok
         "Whim::Core" => [
-        {   data_directory         => $transient_db,
-            author_photo_directory => "$FindBin::Bin/public/author_photos",
+        {   data_directory => $transient_db,
+            home           => "$FindBin::Bin",
         }
         ],
         'succeeds if data_directory set to $Whim::Core::TRANSIENT_DB';
