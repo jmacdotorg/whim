@@ -9,5 +9,11 @@ use lib
     ;
 use Mojolicious::Commands;
 
+# This environment variable is set by the `listen` subcommand, and helps
+# tame the Hypnotoad server to suit our hacky purposes.
+if ( $ENV{WHIM_HYPNOTOAD} && !@ARGV ) {
+    @ARGV = ('listen');
+}
+
 # Start command line interface for application
-Mojolicious::Commands->start_app('Whim');
+Mojolicious::Commands->start_app( 'Whim', @ARGV );
