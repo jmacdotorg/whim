@@ -20,24 +20,48 @@ use Whim::Mention;
 # Helpful for automated tests and maybe future non-persistent uses of whim
 our $TRANSIENT_DB = ":memory:";
 
+has 'home' => (
+    is      => 'lazy',
+    coerce  => sub { path( $_[0] ) },
+    trigger => sub {
+        my ( $self, $dir ) = @_;
+        unless ( -e $dir ) {
+            mkdir $dir or die "Can't mkdir Whim home $dir: $!\n";
+        }
+    },
+);
+
 has 'data_directory' => (
-    is  => 'ro',
+    is  => 'lazy',
     isa => sub {
 
         # $TRANSIENT_DB can be coerced to a Path::Tiny, so this check still works.
         die "data_directory must be a valid path or Path::Tiny object\n"
             unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') );
     },
-    required => 1,
-    coerce   => sub { path( $_[0] ) },
+    coerce  => sub { path( $_[0] ) },
+    trigger => sub {
+        my ( $self, $dir ) = @_;
+        return if $dir eq $TRANSIENT_DB;
+        unless ( -e $dir ) {
+            mkdir $dir or die "Can't mkdir data directory $dir: $!\n";
+        }
+    },
 );
 
 has 'dbh' => ( is => 'lazy', );
 
 has 'author_photo_directory' => (
-    is       => 'ro',
-    required => 1,
-    coerce   => sub { path( $_[0] ) },
+    is  => 'lazy',
+    isa => sub {
+        unless ( -e $_[0] ) {
+            die "No author photo directory at $_[0]\n";
+        }
+        unless ( -w $_[0] ) {
+            die "Author photo directory not writeable at $_[0]\n";
+        }
+    },
+    coerce => sub { path( $_[0] ) },
 );
 
 has 'ua' => (
@@ -288,6 +312,18 @@ sub _build_dbh( $self ) {
     return $dbh;
 }
 
+sub _build_home( $self ) {
+    return path( $ENV{HOME} )->child('.whim');
+}
+
+sub _build_data_directory( $self ) {
+    return $self->home->child('data');
+}
+
+sub _build_author_photo_directory( $self ) {
+    return $self->home->child('public')->child('author_photos');
+}
+
 sub _process_author_photo_tx ( $self, $response ) {
     if ( $response->is_success ) {
         my $photo_hash = sha256_hex( $response->decoded_content );
@@ -316,3 +352,21 @@ sub _initialize_database( $dbh ) {
 }
 
 1;
+
+=head1 NAME
+
+Whim::Core - A code library used by the Whim webmention multitool
+
+=head1 DESCRIPTION
+
+This is a code library used by the C<whim> executable. It doesn't have a
+public interface!
+
+=head1 SEE ALSO
+
+L<whim>
+
+=head1 AUTHOR
+
+Jason McIntosh E<lt>jmac@jmac.orgE<gt>
+

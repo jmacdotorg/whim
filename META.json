@@ -1,0 +1,90 @@
+{
+   "abstract" : "A code library used by the Whim webmention multitool",
+   "author" : [
+      "Jason McIntosh <jmac@jmac.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v3.1.10, CPAN::Meta::Converter version 2.150005",
+   "license" : [
+      "mit"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Whim",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples",
+         "author",
+         "builder"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.64"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Code::TidyAll" : "0",
+            "Perl::Tidy" : "0",
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion::Fast" : "0.04",
+            "Test::PAUSE::Permissions" : "0.07",
+            "Test::Pod" : "1.41",
+            "Test::Spellunker" : "v0.2.7"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "DBD::SQLite" : "0",
+            "DBI" : "0",
+            "DateTime::Format::ISO8601" : "0",
+            "Digest::SHA" : "0",
+            "FindBin" : "0",
+            "LWP::UserAgent" : "0",
+            "Mojolicious" : "0",
+            "Moo" : "0",
+            "MooX::ClassAttribute" : "0",
+            "Path::Tiny" : "0",
+            "Readonly" : "0",
+            "Scalar::Util" : "0",
+            "Test::Exception" : "0",
+            "Test::More" : "0",
+            "Try::Tiny" : "0",
+            "Web::Mention" : "0",
+            "feature" : "0",
+            "lib" : "0",
+            "strict" : "0",
+            "utf8::all" : "0",
+            "warnings" : "0"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/jmacdotorg/whim/issues"
+      },
+      "homepage" : "https://github.com/jmacdotorg/whim",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/jmacdotorg/whim.git",
+         "web" : "https://github.com/jmacdotorg/whim"
+      }
+   },
+   "version" : "2020.05.18.00",
+   "x_authority" : "cpan:JMAC",
+   "x_contributors" : [
+      "Brian Wisti <brianwisti@pobox.com>"
+   ],
+   "x_serialization_backend" : "JSON::PP version 2.27300_01",
+   "x_static_install" : 1
+}

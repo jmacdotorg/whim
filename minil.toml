@@ -1,0 +1,9 @@
+name = "Whim"
+# badges = ["travis-ci.com"]
+authority="cpan:JMAC"
+
+module_maker="ExtUtilsMakeMaker"
+static_install = "auto"
+
+readme_from="README.pod"
+license="mit"

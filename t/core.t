@@ -18,8 +18,8 @@ initialize_tests();
 
 diag("Create Whim object");
 my $whim = Whim::Core->new(
-    {   data_directory         => $Whim::Core::TRANSIENT_DB,
-        author_photo_directory => "$FindBin::Bin/public/author_photos",
+    {   data_directory => $Whim::Core::TRANSIENT_DB,
+        home           => "$FindBin::Bin",
     }
 );
 
@@ -67,10 +67,23 @@ my $whim = Whim::Core->new(
 done_testing();
 
 sub initialize_tests {
-    foreach my $child ( path("$FindBin::Bin/run")->children ) {
-        unless ( $child->basename =~ /^\./ ) {
-            try { $child->remove_tree };
+    my $run_dir = path("$FindBin::Bin/run");
+
+    if ( -e $run_dir ) {
+
+        foreach my $child ( path("$FindBin::Bin/run")->children ) {
+            unless ( $child->basename =~ /^\./ ) {
+                try { $child->remove_tree };
+            }
         }
     }
+    else {
+        mkdir $run_dir;
+    }
+
     mkdir "$FindBin::Bin/run/images";
+    unless ( -e "$FindBin::Bin/public/author_photos" ) {
+        mkdir "$FindBin::Bin/public/author_photos";
+    }
+
 }
