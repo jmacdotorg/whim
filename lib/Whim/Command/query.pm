@@ -4,8 +4,8 @@ use Mojo::Base 'Mojolicious::Command';
 use feature 'signatures';
 no warnings qw(experimental::signatures);
 
-has description => 'Fetch webmentions';
-has usage       => "XXX Fill me in! XXX";
+has description => 'Fetch and display webmentions, or update your block-list';
+has usage       => sub { shift->extract_usage };
 
 use Getopt::Long qw(GetOptionsFromArray);
 my %options;
@@ -156,3 +156,53 @@ sub massage_options {
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+Whim::Command::query - Query command
+
+=head1 SYNOPSIS
+
+  Usage: whim query [OPTIONS]
+
+  The default action is to display a list of stored webmentions, optionally
+  filtered by the provided options. You can run other actions by providing
+  different options, as listed below.
+
+  Options:
+    Actions:
+      --list     Display the current blocklist
+      --block    Add source strings (via --source) to the blocklist
+      --unblock  Remove source strings (via --source) from the blocklist
+
+    Filters:                    Limit affected webmentions to those...
+      --before=2020-01-01          received before this date
+      --after=2020-01-01           received after this date
+      --on=2020-01-01              received on this date exactly
+      --source=example.com/foo     whose source URL contains this string
+      --not-source=example.com/bar whose source URL lacks this string
+      --target=mysite.example/bar  whose target URL contains this string
+
+=head1 DESCRIPTION
+
+This command queries Whim's webmention database, either to display
+summaries of webmentions that meet criteria specified as command-line
+options, or to manage one's blocklist.
+
+You can specify multiple C<--source> or C<--not-source> flags, as needed.
+
+=head1 NOTES AND BUGS
+
+The blocklist-management stuff should really have its own command.
+(GitHub issue #32)
+
+This should be able to output JSON representations of webmentions
+(GitHub issue #8)
+
+=head1 SEE ALSO
+
+L<whim>
+
+=cut

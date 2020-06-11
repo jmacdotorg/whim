@@ -5,7 +5,7 @@ use feature 'signatures';
 no warnings qw(experimental::signatures);
 
 has description => 'Verify webmentions';
-has usage       => "XXX Fill me in! XXX";
+has usage       => sub { shift->extract_usage };
 
 use Getopt::Long qw(GetOptionsFromArray);
 my %options;
@@ -33,3 +33,27 @@ sub speak {
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+Whim::Command::verify - Verify command
+
+=head1 SYNOPSIS
+
+  Usage: whim verify
+
+=head1 DESCRIPTION
+
+This command verifies webmentions, as described above. It prints a short
+description of what it did to standard output.
+
+It will automatically limit its work to those webmentions that have not already
+had a verification attempt made on them.
+
+=head1 SEE ALSO
+
+L<whim>
+
+=cut
