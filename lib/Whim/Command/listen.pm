@@ -3,6 +3,8 @@ use Mojo::Base 'Mojolicious::Command';
 
 use Mojo::Server::Hypnotoad;
 
+use FindBin;
+
 has description =>
     'Listen for incoming webmentions (and other HTTP requests)';
 has usage => 'XXX Fill me in later XXX';
@@ -37,7 +39,8 @@ sub run {
     # XXX Someday, when we have app configuration, we will pass it into
     #     the $toad server object right around here.
 
-    $toad->run( $self->app->home->child('script')->child('whim') );
+    $toad->run("$FindBin::Bin/whim");
+
 }
 
 1;
