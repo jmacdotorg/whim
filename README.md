@@ -36,11 +36,25 @@ And `prove` for the tests!
 
 ## Running whim
 
-The `whim` executable accepts the following subcommands. Some fine day, they may actually have documentation.
+The `whim` executable accepts the following subcommands. For further documentation and examples, run `whim help [command]`.
 
-- `daemon`: Run a daemon that listens for incoming webmentions and stores them in a local database
+- `listen`: Run a daemon that listens for incoming webmentions and stores them in a local database. (At this time, it only listens on port 8080 - a known bug. See GitHub issue #33.)
+
+    See also ["Displaying webmentions"](#displaying-webmentions), below.
+
 - `send`: Send a webmention
 - `query`: Query a local database for stored webmentions meeting given criteria
+- `verify`: Try to verify every stored webmention with an unknown verification state. (Webmentions do not show up in any queries until they're verified.)
+
+## Displaying webmentions
+
+Besides listening for incoming webmentions, the `listener` command also sets up an HTTP endpont at `/display_wms`. It accepts GET requests that contain one query-string argument, `url`. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
+
+For example:
+
+    http//example.com:8080/display_wms?url=https://some-source.example/foobar
+
+Whim uses a set of default templates to make this work. You can provide your own templates in `$HOME/.whim/templates`. The fact that I have no further information for you about this is a known issue. (GitHub issue #34)
 
 ## "Whim"?
 
