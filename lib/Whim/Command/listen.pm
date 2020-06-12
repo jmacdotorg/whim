@@ -15,6 +15,12 @@ my %options;
 sub run {
     my ( $self, @args ) = @_;
 
+    # Set the Mojo mode; override by running with '-m development'.
+    # We use 'listen' and not 'production' to give the log file a better name.
+    unless ( $ENV{MOJO_MODE} && ( $ENV{MOJO_MODE} eq 'development' ) ) {
+        $self->app->mode('listen');
+    }
+
     my $command = $ARGV[-1];
     my $method  = "do_$command";
 
