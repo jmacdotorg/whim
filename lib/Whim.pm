@@ -8,6 +8,8 @@ use Path::Tiny;
 
 our $VERSION = '2020.05.18.00';
 
+has info => "This is Whim, version $VERSION, by Jason McIntosh.";
+
 sub startup {
     my $self = shift;
 
@@ -22,7 +24,8 @@ sub startup {
     my $config =
         $self->plugin( 'Config', { default => { home => $self->home, }, } );
 
-    push @{ $self->commands->namespaces }, 'Whim::Command';
+    $self->commands->namespaces( ['Whim::Command'] );
+    $self->set_up_help;
 
     # Create a 'whim' helper containing our Whim::Core object
     $self->helper(
@@ -54,6 +57,15 @@ sub startup {
 
     $r->get('/display_wms')->to('display#display');
 
+}
+
+sub set_up_help {
+    my $self = shift;
+    $self->commands->message( $self->info . "\n\n" );
+
+    $self->commands->hint(
+        "See '$0 help COMMAND' for more information on a specific commmand.\n"
+    );
 }
 
 1;

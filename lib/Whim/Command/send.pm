@@ -8,7 +8,7 @@ use Whim::Mention;
 use Try::Tiny;
 
 has description => 'Send webmentions';
-has usage       => "XXX Fill me in! XXX";
+has usage       => sub { shift->extract_usage };
 
 sub run {
     my ( $self, $source, $target ) = @_;
@@ -79,3 +79,35 @@ sub check_argument ( $argument_name, $url_text ) {
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+Whim::Command::send - Send command
+
+=head1 SYNOPSIS
+
+  Usage: whim send [source-url] [target-url]
+
+  Run with two arguments to send a single webmention with the given
+  source and target URLs.
+
+  Run with one argument to send webmentions to every valid target found
+  within the content found at the given source URL.
+
+=head1 DESCRIPTION
+
+This command sends webmentions, as described above. It prints a short
+description of what it did to standard output.
+
+If called with one argument, it will attempt to load the content from
+the given source URL, locate an C<h-entry> microformat with an
+C<e-content> property, and then try to send webmentions to all linked
+URLs found within.
+
+=head1 SEE ALSO
+
+L<whim>
+
+=cut
