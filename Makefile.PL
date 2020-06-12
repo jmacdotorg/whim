@@ -24,6 +24,7 @@ my %WriteMakefileArgs = (
     PREREQ_PM          => {
   "DBD::SQLite" => 0,
   "DBI" => 0,
+  "Daemon::Control" => 0,
   "DateTime::Format::ISO8601" => 0,
   "Digest::SHA" => 0,
   "FindBin" => 0,
