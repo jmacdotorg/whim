@@ -17,3 +17,335 @@ if ( $ENV{WHIM_HYPNOTOAD} && !@ARGV ) {
 
 # Start command line interface for application
 Mojolicious::Commands->start_app( 'Whim', @ARGV );
+
+=head1 NAME
+
+whim - A webmention multitool
+
+=head1 SYNOPSIS
+
+Listen for webmentions at port 3000, and store any that arrive.
+(Also, run a little webserver for displaying received webmentions as comments.)
+
+ $ whim listen start
+
+Validate recently arrived webmentions
+
+ $ whim validate
+
+See summaries of received, valid webmentions
+
+ $ whim query --after=2020-01-01
+ $ whim query --target=my-site.example.com/some/article
+
+Block a domain from further consideration
+
+ $ whim query --block=trollface.example
+
+Send one webmention
+
+ $ whim send https://my-site.example.com/some/article \
+             https://another-site.example/target/article
+
+Send webmentions to all valid targets found in a page's content
+
+ $ whim send https://my-site.example.com/some/article
+
+=head1 DESCRIPTION
+
+Whim is a "webmention multitool" that lets you receive, send, view, and
+display webmentions for your website.
+
+Its main interface is the C<whim> command-line program, which has
+various sub-commands. You can run C<whim help> (or just C<whim>, with no
+arguments) at any time to see a summary of available commands.
+
+
+=head1 Concepts
+
+Concepts to understand to get the most out of Whim:
+
+
+=head2 Whim's home directory
+
+Whim keeps its data, logs, and other important information in a home
+directory. By default, this is C<.whim/> within your own home directory.
+Whim will try to create it if it doesn't already exist, and will
+complain if it can't.
+
+You can set this location to something other than the default via the
+C<WHIM_HOME> environment variable.
+
+=head2 Webmention
+
+Webmention is L<a W3C
+standard|https://www.w3.org/TR/2017/REC-webmention-20170112/> that --
+especially when combined with semantic markup through microformats --
+allows for surprisingly rich interactions among the authors of otherwise
+unconnected websites, running at different domains. For introductory
+information, see L<this article by Chris Aldrich|https://alistapart.com/article/webmentions-enabling-better-communication-on-the-internet/>.
+
+
+=head2 Blocklist
+
+Whim lets you maintain a B<blocklist> against which it filters every
+webmention's source prior to displaying it, or returning it as part of
+any other query. An entry in Whim's blocklist is a simple string, and
+Whim will block any webmention whose source contains that
+string.
+
+For example, if the blocklist contains "https://foobar.example.com/blah"
+as an element, Whim will block a webmention with the source
+`https://foobar.example.com/blah/bazzle.html`, but not
+`https://foobar.example.com/baz`.
+
+Blocklist elements needn't be full URLs like this; you could block every
+webmention whose source URL contained the substring `foo` at all, if you
+wished.
+
+Whim will continue to store, verify, and perform other actions as needed
+with blocked webmentions. It just won't display them to you, until and
+unless you remove the relevant blocks from its blocklist.
+
+
+=head1 Commands
+
+
+=head2 listen
+
+    whim listen start whim listen -l http://*:8080 start
+    whim listen -l 'https://*:3000?cert=./server.crt&key=./server.key' start
+    whim listen stop
+
+Runs a daemon that listens for webmentions. By default, it listens on
+port 3000, but you can adjust this with command-line options. See C<whim
+help listen> for a more complete list of options available.
+
+Its required final argument is a typical daemon-control directive:
+start, stop, restart, or status.
+
+The listener will automatically store all received well-formed
+webmentions in its database, but will not process them. You must call
+C<whim verify> as a separate step to do that. (This all happens in
+accordance with W3C's Webmention spec, which recommends that receipt and
+processing take place asynchronously.)
+
+The listener will respond to GET requests at the path C</> with a simple
+message that it's up and running. (Actual webmentions arrive via POST at
+C</>.)
+
+Furthermore, the listener sets up a GET endpoint at C</display_wms> that
+will return HTML representations of webmentions whose source matches the
+value of a given C<url> query-string argument. For example:
+
+    https://my-site.example:3000/display_wms?url=http://source.example
+
+Whim has its own default templates for displaying webmentions like this.
+You can override them in whole or in part with custom template files, as
+described below.
+
+Whim's listener daemon will log to C<log/listen.log> within Whim's home
+directory.
+
+=head2 query
+
+ # See summaries of received, valid webmentions
+ whim query --after=2020-01-01
+ whim query --target=my-site.example.com/some/article
+
+ # Block a domain from further consideration
+ whim query --block=trollface.example
+
+Display, as human-readable summaries printed to standard output,
+verified webmentions that match the given criteria. (If no criteria are
+given, then Whim prints every verified webmention it knows about.)
+
+For a full list of options, type `whim help query`.
+
+The `query` command also gives you controls to view and update Whim's
+blocklist.
+
+=head2 send
+
+    # Try to send one webmention
+    whim send http://source.example/path/to/page \
+    http://target.example/path/to/another/page
+
+    # Try to send many webmentions
+    whim send http://source.example/pah/to/page
+
+Try to send webmentions, based on the one or two URLs given as
+arguments. It prints a short description of what it did to standard
+output.
+
+(Note that attempts to send webmentions often end in failure, simply
+because the target URL does not advertise a webmention endpoint, leaving
+Whim with no place to actually send it. This is not unusual, and thus
+all the rather passive-sounding "try to send" language used here.)
+
+If you call C<whim send> with two arguments, it will try to send a
+single webmention, using the two URLs as the webmention's source and
+target, respectively.
+
+If called with one argument, it will attempt to load the document at
+that URL, and then try to determine which part of that document
+represents the content (as opposed to comments, headers and sidebars,
+and the like). If it gets this far, then it will attempt to send a
+webmention for every webmention-valid hyperlink found within.
+
+Whim tries to determine content by locating an C<h-entry> microformat
+with an C<e-content> property within the document's HTML. If it can't
+find anything like that, then it will send no webmentions.
+
+=head2 verify
+
+    whim verify
+
+Attempt to verify all unprocessed webmentions in Whim's database --
+those with no validation attempts made on them. This is the initial
+state of every webmention that Whim receives and stores; you can think
+of the collection of unprocessed webmentions as Whim's "inbox".
+
+Whim will try to load the content from every unprocessed webmention's
+source, and confirm that it really does link to the target URL. If it
+does, it will mark it as verified. Otherwise, it will mark it as
+unverified. In either case, Whim will consider the webmention
+"processed", and not subject to future verification attempts.
+
+This command is suitable for calling as a cron task, or through some
+other method asynchronous from the initial receipt and storage of
+webmentions, as recommended in the Webmention standard. Note that it
+might take a while to run, depending upon the size of the
+unprocessed-webmention queue.
+
+
+
+=head1 Templates
+
+Things get a little hairy and apologetic here. If you can read this,
+you've chosen to use Whim in its earliest days. (Or you are somehow
+running an old copy of it, or I got bored or otherwise stopped
+developing Whim beyond this point. Gee, I hope that doesn't happen, but
+life is complicated.) In any event, the mere act of reading this far
+marks you as a brave and worthy I<pioneer> and I sincerely welcome
+direct contact from you with any questions about this stuff. (See
+"Support", below.)
+
+Whim will check for templates in C<templates/> within its home directory
+before falling back to its built-in default templates. At this time,
+Whim expects templates to be L<Mojo "embedded Perl" template
+files|https://metacpan.org/pod/Mojo::Template#SYNTAX> -- which is
+admittedly not ideal, and something I hope to improve upon presently.
+
+Whim directly calls only one template, which it expects to find at
+C<webmentions.html.ep>. It passes this template the following Perl
+variables:
+
+=over
+
+=item *
+
+B<webmention_count>, the total number of verified webmentions the given
+URL has received.
+
+
+=item *
+
+B<webmentions>, a hash reference containing object representations of
+all the webmentions the given URL has received, sorted under hash-keys
+named after webmention types.
+
+Possible keys include:
+
+
+=over
+
+=item *
+
+mention
+
+
+=item *
+
+like
+
+
+=item *
+
+repost
+
+
+=item *
+
+rsvp
+
+
+=item *
+
+quotation
+
+
+=item *
+
+reply
+
+
+=back
+
+The webmentions are Web::Mention objects, as described at that manual
+page.
+
+
+
+=back
+
+My best advice for starting custom templates, at this time, involves
+looking at the default templates in Whim's source code, found in
+C<lib/Whim/templates>, and seeing how it works there. Yes, this is not
+very good advice. I really do want to make this easier! But, it's all we
+have for now.
+
+
+=head1 Notes
+
+
+=head2 Project status
+
+At the time of this writing (summer 2020), this project is very young,
+and under active development as its author and other contributors work
+to find its desired shape.
+
+While Whim works right now, it is still rough around the edges, and
+probably full of both bugs and fundamental design flaws. Details about
+the commands below are subject to change dramatically in future
+releases.
+
+
+=head2 Support
+
+=over
+
+=item *
+
+L<Email the author|mailto:jmac@jmac.org>
+
+
+=item *
+
+L<Whim on GitHub|https://github.com/jmacdotorg/whim/>
+
+
+=item *
+
+L<The #whim channel on Freenode
+IRC|http://webchat.freenode.net/?channels=%23whim>
+
+
+=back
+
+The author very much welcomes questions, bug reports, and other
+communication about Whim via any of these channels.
+
+=head1 AUTHOR
+
+Jason McIntosh E<lt>jmac@jmac.orgE<gt>
