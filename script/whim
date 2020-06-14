@@ -142,7 +142,7 @@ value of a given C<url> query-string argument. For example:
 
 Whim has its own default templates for displaying webmentions like this.
 You can override them in whole or in part with custom template files, as
-described below.
+described in L<"Templates">, below.
 
 Whim's listener daemon will log to C<log/listen.log> within Whim's home
 directory.
@@ -229,7 +229,7 @@ developing Whim beyond this point. Gee, I hope that doesn't happen, but
 life is complicated.) In any event, the mere act of reading this far
 marks you as a brave and worthy I<pioneer> and I sincerely welcome
 direct contact from you with any questions about this stuff. (See
-"Support", below.)
+L<"Support">, below.)
 
 Whim will check for templates in C<templates/> within its home directory
 before falling back to its built-in default templates. At this time,
@@ -292,7 +292,7 @@ reply
 
 =back
 
-The webmentions are Web::Mention objects, as described at that manual
+The webmentions are L<Web::Mention> objects, as described at that manual
 page.
 
 
