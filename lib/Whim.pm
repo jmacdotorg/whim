@@ -2,6 +2,8 @@ package Whim;
 use Mojo::Base 'Mojolicious';
 
 use Mojo::File qw(curfile);
+use Mojo::Loader qw(load_class);
+
 use Whim::Core;
 
 use Path::Tiny;
@@ -57,6 +59,16 @@ sub startup {
 
     $r->get('/display_wms')->to('display#display');
 
+    # Mojolicious's 'Unknown command' error message is confusing, so
+    # we do our own check for command-knownness.
+    # (Mojo's load_class(), invoked below, returns truth if it fails.)
+    if (   $ARGV[0]
+        && $ARGV[0] ne 'help'
+        && load_class("Whim::Command::$ARGV[0]") )
+    {
+        die "Unknown command '$ARGV[0]'. "
+            . "(Type 'whim help' for a command list.)\n";
+    }
 }
 
 sub set_up_help {
