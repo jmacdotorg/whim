@@ -1,5 +1,6 @@
 requires "DBI";
 requires "DBD::SQLite";
+requires "Daemon::Control";
 requires "DateTime::Format::ISO8601";
 requires "Digest::SHA";
 requires "FindBin";

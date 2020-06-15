@@ -38,7 +38,7 @@ And `prove` for the tests!
 
 The `whim` executable accepts the following subcommands. For further documentation and examples, run `whim help [command]`.
 
-- `listen`: Run a daemon that listens for incoming webmentions and stores them in a local database. (At this time, it only listens on port 8080 - a known bug. See GitHub issue #33.)
+- `listen`: Run a daemon that listens for incoming webmentions and stores them in a local database.
 
     See also ["Displaying webmentions"](#displaying-webmentions), below.
 
