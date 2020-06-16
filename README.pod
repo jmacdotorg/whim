@@ -5,7 +5,7 @@
 
 Whim is a command-line utility for sending, receiving, and working with L<webmentions|https://www.w3.org/TR/webmention/>.
 
-Notable features (both real and I<graspably aspirational>) include:
+Notable features include:
 
 =over
 
@@ -29,7 +29,7 @@ A tool for sending webmentions, individually or en masse (given a source URL)
 
 =item *
 
-Commands to query a local database of received webmentions, with both JSON and human-readable output modes
+Commands to query a local database of received webmentions
 
 
 
@@ -42,37 +42,70 @@ A simple webserver to display webmention-powered comment sections as HTML, suita
 =back
 
 
-=head2 Not really usable yet (but webmention.io is)
+=head2 Project status
 
-I<This software is pre-alpha> and has no documentation, incomplete test coverage, and inflexible configuration. I hope to continue improving this work over the course of 2020. L<See the project's Issues tracker for ongoing status updates.|https://github.com/jmacdotorg/whim/milestone/1>
+=head3 It's alpha
+
+I<This software is very young>, with present-but-incomplete documentation and inflexible configuration. It is I<absolutely> full of not just bugs but questionable design decisions that I have yet to acknowledge and address.
+
+I began this project in the spring of 2020, and hope to continue improving it over the course of the year. L<See the project's Issues tracker for ongoing status updates.|https://github.com/jmacdotorg/whim/milestone/1>
+
+=head3 Mature alternatives
 
 B<If you want to start receiving webmentions right now>, please check out Aaron Parecki's most excellent L<Webmention.io|https://webmention.io>, a free hosted service that you can start using right away, with any web page. (It is also an open-source project.)
+
+=head3 Contact and support
 
 B<If you are still curious about Whim>, by all means check it out and L<give me a holler|mailto:jmac@jmac.org> if you'd like. I'd be happy to answer any questions about this project or L<my other IndieWeb work|https://indieweb.org/User:Jmac.org>.
 
 You may also wish to join the L<"#whim" channel on Freenode IRC|http://webchat.freenode.net/?channels=%23whim>, where I am likely idling but listening as C<jmac>.
 
 
-=head2 Building and testing whim locally
+=head2 Installing Whim
 
-Use the CPAN or L<App::cpanminus|https://metacpan.org/pod/App::cpanminus> tools to install dependencies.
+You need the following stuff already installed to run Whim:
 
- shell-session
- $ cpanm --installdeps --with-develop .
+=over 
 
+=item * 
 
-And C<prove> for the tests!
+SQLite
 
- shell-session
+=item * 
+
+Perl (version 5.24.0 or higher)
+
+=item *
+
+The `cpanm` command-line program. It is likely available as "cpanminus" in your favorite package manager. You can also install it through the instructions at L<https://cpanmin.us>.
+
+=back
+
+=head3 Installing Whim via CPAN
+
+I<Watch this space...> Alas, you have to install Whim via source, for now, as described below.
+
+=head3 Installing Whim from source
+
+Install dependencies:
+
+ $ cpanm --installdeps .
+ 
+If you want to test Whim before installing it (this step is optional):
+
  $ prove -l t/ xt/
  ⋮
  Result: PASS
 
+Finally, install Whim:
 
+ $ perl Makefile.PL
+ $ make
+ $ make install
 
 =head2 Running whim
 
-The C<whim> executable accepts the following subcommands. For further documentation and examples, run C<whim help [command]>.
+The C<whim> executable accepts the following subcommands.
 
 =over
 
@@ -86,23 +119,31 @@ See also L<"Displaying webmentions">, below.
 
 =item *
 
-C<send>: Send a webmention
+C<send>: Send webmentions.
 
 
 
 =item *
 
-C<query>: Query a local database for stored webmentions meeting given criteria
+C<query>: Query a local database for stored, verified webmentions meeting given criteria, and display the results as a human-readable summary.
+
+(It I<should> offer JSON output as well, but alas it does not right now.)
+
+This command also lets you view and modify a blocklist of unwelcome webmention sources. Blocked webmentions don't appear in query results.
 
 =item *
 
-C<verify>: Try to verify every stored webmention with an unknown verification state. (Webmentions do not show up in any queries until they're verified.)
+C<verify>: Try to verify every stored webmention that requires verification.
 
 =back
 
+For quick help on any command, run C<whim help [command]>.
+
+For more complete documentation, run C<man whim>.
+
 =head2 Displaying webmentions
 
-Besides listening for incoming webmentions, the C<listener> command also sets up an HTTP endpont at C</display_wms>. It accepts GET requests that contain one query-string argument, C<url>. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
+Besides listening for incoming webmentions, the C<listen> command also sets up an HTTP endpont at C</display_wms>. It accepts GET requests that contain one query-string argument, C<url>. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
 
 For example:
 
@@ -130,6 +171,23 @@ Whim puts the I<hi!> in B<w>ebB<m>entions.
 
 =back
 
+=head2 Author and contributors
+
+Whim's lead developer is Jason McIntosh.
+
+Contributors include:
+
+=over
+
+=item *
+
+Adam Herzog
+
+=item *
+
+Brian Wisti
+
+=back
 
 =head2 Copyright and licence
 
