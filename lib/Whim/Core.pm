@@ -25,9 +25,7 @@ has 'home' => (
     coerce  => sub { path( $_[0] ) },
     trigger => sub {
         my ( $self, $dir ) = @_;
-        unless ( -e $dir ) {
-            mkdir $dir or die "Can't mkdir Whim home $dir: $!\n";
-        }
+        $self->_make_homedir($dir);
     },
 );
 
@@ -55,7 +53,7 @@ has 'author_photo_directory' => (
     is  => 'lazy',
     isa => sub {
         unless ( -e $_[0] ) {
-            die "No author photo directory at $_[0]\n";
+            $_[0]->mkpath;
         }
         unless ( -w $_[0] ) {
             die "Author photo directory not writeable at $_[0]\n";
@@ -313,7 +311,9 @@ sub _build_dbh( $self ) {
 }
 
 sub _build_home( $self ) {
-    return path( $ENV{HOME} )->child('.whim');
+    my $dir = path( $ENV{HOME} )->child('.whim');
+    $self->_make_homedir($dir);
+    return $dir;
 }
 
 sub _build_data_directory( $self ) {
@@ -348,6 +348,15 @@ sub _initialize_database( $dbh ) {
 
     foreach (@statements) {
         $dbh->do($_);
+    }
+}
+
+sub _make_homedir ( $self, $dir ) {
+    unless ( $dir->exists ) {
+        $dir->mkpath;
+        $dir->child('log')->mkpath;
+        $self->data_directory->mkpath;
+        $self->author_photo_directory->mkpath;
     }
 }
 
