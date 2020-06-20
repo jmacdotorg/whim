@@ -216,20 +216,10 @@ unprocessed-webmention queue.
 
 =head1 Templates
 
-Things get a little hairy and apologetic here. If you can read this,
-you've chosen to use Whim in its earliest days. (Or you are somehow
-running an old copy of it, or I got bored or otherwise stopped
-developing Whim beyond this point. Gee, I hope that doesn't happen, but
-life is complicated.) In any event, the mere act of reading this far
-marks you as a brave and worthy I<pioneer> and I sincerely welcome
-direct contact from you with any questions about this stuff. (See
-L<"Support">, below.)
-
 Whim will check for templates in C<templates/> within its home directory
 before falling back to its built-in default templates. At this time,
 Whim expects templates to be L<Mojo "embedded Perl" template
-files|https://metacpan.org/pod/Mojo::Template#SYNTAX> -- which is
-admittedly not ideal, and something I hope to improve upon presently.
+files|https://metacpan.org/pod/Mojo::Template#SYNTAX>.
 
 Whim directly calls only one template, which it expects to find at
 C<webmentions.html.ep>. It passes this template the following Perl

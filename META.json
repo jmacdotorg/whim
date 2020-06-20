@@ -1,5 +1,5 @@
 {
-   "abstract" : "A code library used by the Whim webmention multitool",
+   "abstract" : "A webmention multitool",
    "author" : [
       "Jason McIntosh <jmac@jmac.org>"
    ],

@@ -73,11 +73,12 @@ sub startup {
 
 sub set_up_help {
     my $self = shift;
-    $self->commands->message( $self->info . "\n\n" );
+    $self->commands->message( $self->info . "\n\nAvailable commands:\n" );
 
     $self->commands->hint(
-        "See '$0 help COMMAND' for more information on a specific commmand.\n"
-    );
+              "\nSee 'whim help COMMAND' for more information on a specific "
+            . "commmand.\n"
+            . "See 'man whim' for more thorough documentation.\n" );
 }
 
 1;
