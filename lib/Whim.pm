@@ -34,8 +34,14 @@ sub startup {
     $self->set_up_help;
 
     # Create a 'whim' helper containing our Whim::Core object
-    my $whim = Whim::Core->new($config);
-    $self->helper( whim => $whim, );
+    $self->helper(
+        whim => sub {
+            state $whim = Whim::Core->new($config);
+        }
+    );
+
+    # ...and then force it to create its homedir, if it needs to
+    $self->whim->home;
 
     # Set up docroot and template paths.
     # For both, the first place to look is the app home, and then using
