@@ -21,9 +21,10 @@ use Whim::Mention;
 our $TRANSIENT_DB = ":memory:";
 
 has 'home' => (
-    is      => 'lazy',
-    coerce  => sub { path( $_[0] ) },
-    trigger => sub {
+    is       => 'rw',
+    required => 1,
+    coerce   => sub { path( $_[0] ) },
+    trigger  => sub {
         my ( $self, $dir ) = @_;
         $self->_make_homedir($dir);
     },
@@ -32,19 +33,14 @@ has 'home' => (
 has 'data_directory' => (
     is  => 'lazy',
     isa => sub {
+        unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') ) {
 
-        # $TRANSIENT_DB can be coerced to a Path::Tiny, so this check still works.
-        die "data_directory must be a valid path or Path::Tiny object\n"
-            unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') );
-    },
-    coerce  => sub { path( $_[0] ) },
-    trigger => sub {
-        my ( $self, $dir ) = @_;
-        return if $dir eq $TRANSIENT_DB;
-        unless ( -e $dir ) {
-            mkdir $dir or die "Can't mkdir data directory $dir: $!\n";
+            # $TRANSIENT_DB can be coerced to a Path::Tiny,
+            # so this check still works.
+            die "data_directory must be a valid path or Path::Tiny object\n";
         }
     },
+    coerce => sub { path( $_[0] ) },
 );
 
 has 'dbh' => ( is => 'lazy', );
@@ -52,11 +48,9 @@ has 'dbh' => ( is => 'lazy', );
 has 'author_photo_directory' => (
     is  => 'lazy',
     isa => sub {
-        unless ( -e $_[0] ) {
-            $_[0]->mkpath;
-        }
-        unless ( -w $_[0] ) {
-            die "Author photo directory not writeable at $_[0]\n";
+        unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') ) {
+            die "author_photo_directory must be a valid path or "
+                . "Path::Tiny object\n";
         }
     },
     coerce => sub { path( $_[0] ) },
@@ -308,12 +302,6 @@ sub _build_dbh( $self ) {
     _initialize_database($dbh) if $db_needs_initialization;
 
     return $dbh;
-}
-
-sub _build_home( $self ) {
-    my $dir = path( $ENV{HOME} )->child('.whim');
-    $self->_make_homedir($dir);
-    return $dir;
 }
 
 sub _build_data_directory( $self ) {
