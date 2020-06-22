@@ -23,9 +23,9 @@ Listen for webmentions at port 3000, and store any that arrive.
 
  $ whim listen start
 
-Validate recently arrived webmentions
+Verify recently arrived webmentions
 
- $ whim validate
+ $ whim verify
 
 See summaries of received, valid webmentions
 
