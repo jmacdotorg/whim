@@ -173,6 +173,7 @@ Whim::Command::query - Query command
 
   Options:
     Actions:
+      --count    Return only a count of matching webmentions
       --list     Display the current blocklist
       --block    Add source strings (via --source) to the blocklist
       --unblock  Remove source strings (via --source) from the blocklist

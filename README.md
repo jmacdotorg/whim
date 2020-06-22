@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/jmacdotorg/whim.svg?branch=master)](https://travis-ci.com/jmacdotorg/whim)
 # Whim
 
-Whim is a command-line utility for sending, receiving, and working with [webmentions](https://www.w3.org/TR/webmention/).
+Whim is a command-line utility for sending, receiving, and working with [webmentions](https://jmac.org/webmention/).
 
 Notable features include:
 

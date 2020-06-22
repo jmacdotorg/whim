@@ -76,8 +76,10 @@ Webmention is L<a W3C
 standard|https://www.w3.org/TR/2017/REC-webmention-20170112/> that --
 especially when combined with semantic markup through microformats --
 allows for surprisingly rich interactions among the authors of otherwise
-unconnected websites, running at different domains. For introductory
-information, see L<this article by Chris Aldrich|https://alistapart.com/article/webmentions-enabling-better-communication-on-the-internet/>.
+unconnected websites, running at different domains.
+
+For introductory information and resources about Webmention, see
+L<https://jmac.org/webmention/>.
 
 
 =head2 Blocklist
@@ -108,7 +110,8 @@ unless you remove the relevant blocks from its blocklist.
 =head2 listen
 
     whim listen start whim listen -l http://*:8080 start
-    whim listen -l 'https://*:3000?cert=./server.crt&key=./server.key' start
+    whim listen -l 'https://*:3000?cert=./server.crt&key=./server.key' \
+         start
     whim listen stop
 
 Runs a daemon that listens for webmentions. By default, it listens on

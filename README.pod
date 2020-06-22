@@ -3,7 +3,7 @@
 
 =head1 Whim
 
-Whim is a command-line utility for sending, receiving, and working with L<webmentions|https://www.w3.org/TR/webmention/>.
+Whim is a command-line utility for sending, receiving, and working with L<webmentions|https://jmac.org/webmention/>.
 
 Notable features include:
 
