@@ -8,7 +8,7 @@ use Whim::Core;
 
 use Path::Tiny;
 
-our $VERSION = '1.2020.06.19.0';
+our $VERSION = '1.2020.06.22.0';
 
 has info => "This is Whim, version $VERSION, by Jason McIntosh.";
 
