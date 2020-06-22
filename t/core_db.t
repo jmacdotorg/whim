@@ -33,8 +33,7 @@ subtest "Invalid Whim::Core data initialization" => sub {
     throws_ok sub {
         Whim::Core->new(
             {   data_directory => undef,
-                author_photo_directory =>
-                    "$FindBin::Bin/public/author_photos",
+                home           => "$FindBin::Bin",
             }
         );
         },

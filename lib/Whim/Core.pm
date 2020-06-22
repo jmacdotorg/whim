@@ -21,32 +21,26 @@ use Whim::Mention;
 our $TRANSIENT_DB = ":memory:";
 
 has 'home' => (
-    is      => 'lazy',
-    coerce  => sub { path( $_[0] ) },
-    trigger => sub {
+    is       => 'rw',
+    required => 1,
+    coerce   => sub { path( $_[0] ) },
+    trigger  => sub {
         my ( $self, $dir ) = @_;
-        unless ( -e $dir ) {
-            mkdir $dir or die "Can't mkdir Whim home $dir: $!\n";
-        }
+        $self->_make_homedir($dir);
     },
 );
 
 has 'data_directory' => (
     is  => 'lazy',
     isa => sub {
+        unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') ) {
 
-        # $TRANSIENT_DB can be coerced to a Path::Tiny, so this check still works.
-        die "data_directory must be a valid path or Path::Tiny object\n"
-            unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') );
-    },
-    coerce  => sub { path( $_[0] ) },
-    trigger => sub {
-        my ( $self, $dir ) = @_;
-        return if $dir eq $TRANSIENT_DB;
-        unless ( -e $dir ) {
-            mkdir $dir or die "Can't mkdir data directory $dir: $!\n";
+            # $TRANSIENT_DB can be coerced to a Path::Tiny,
+            # so this check still works.
+            die "data_directory must be a valid path or Path::Tiny object\n";
         }
     },
+    coerce => sub { path( $_[0] ) },
 );
 
 has 'dbh' => ( is => 'lazy', );
@@ -54,11 +48,9 @@ has 'dbh' => ( is => 'lazy', );
 has 'author_photo_directory' => (
     is  => 'lazy',
     isa => sub {
-        unless ( -e $_[0] ) {
-            die "No author photo directory at $_[0]\n";
-        }
-        unless ( -w $_[0] ) {
-            die "Author photo directory not writeable at $_[0]\n";
+        unless ( blessed( $_[0] ) && $_[0]->isa('Path::Tiny') ) {
+            die "author_photo_directory must be a valid path or "
+                . "Path::Tiny object\n";
         }
     },
     coerce => sub { path( $_[0] ) },
@@ -312,10 +304,6 @@ sub _build_dbh( $self ) {
     return $dbh;
 }
 
-sub _build_home( $self ) {
-    return path( $ENV{HOME} )->child('.whim');
-}
-
 sub _build_data_directory( $self ) {
     return $self->home->child('data');
 }
@@ -349,6 +337,16 @@ sub _initialize_database( $dbh ) {
     foreach (@statements) {
         $dbh->do($_);
     }
+}
+
+sub _make_homedir ( $self, $dir ) {
+
+    # Path::Tiny's mkpath() method executes without complaint if the path
+    # already exists, so let's just create-if-needed every expected subdir.
+    $dir->mkpath;
+    $dir->child('log')->mkpath;
+    $self->data_directory->mkpath;
+    $self->author_photo_directory->mkpath;
 }
 
 1;

@@ -17,11 +17,15 @@ sub startup {
 
     # Switch the app's home to ~/.whim/
     # (overridable by environment variable)
-    $self->home(
-        Mojo::Home->new(
-            path( $ENV{WHIM_HOME} // $ENV{HOME} )->child('.whim')
-        )
-    );
+    my $whim_homedir;
+    if ( defined $ENV{WHIM_HOME} ) {
+        $whim_homedir = path( $ENV{WHIM_HOME} );
+    }
+    else {
+        $whim_homedir = path( $ENV{HOME} )->child('.whim');
+    }
+
+    $self->home( Mojo::Home->new($whim_homedir) );
 
     my $config =
         $self->plugin( 'Config', { default => { home => $self->home, }, } );
