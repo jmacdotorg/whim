@@ -17,17 +17,13 @@ Notable features include:
 
 _This software is very young_, with present-but-incomplete documentation and inflexible configuration. It is _absolutely_ full of not just bugs but questionable design decisions that I have yet to acknowledge and address.
 
-I began this project in the spring of 2020, and hope to continue improving it over the course of the year. [See the project's Issues tracker for ongoing status updates.](https://github.com/jmacdotorg/whim/milestone/1)
+I began this project in the spring of 2020, and hope to continue improving it over the course of the year. [See the project's Issues tracker for ongoing status updates.](https://github.com/jmacdotorg/whim/issues)
 
-### Mature alternatives
-
-**If you want to start receiving webmentions right now**, please check out Aaron Parecki's most excellent [Webmention.io](https://webmention.io), a free hosted service that you can start using right away, with any web page. (It is also an open-source project.)
+If you'd like to explore more mature alternatives than Whim for working with Webmention, please see [the author's Webmention resource page](https://jmac.org/webmention).
 
 ### Contact and support
 
-**If you are still curious about Whim**, by all means check it out and [give me a holler](mailto:jmac@jmac.org) if you'd like. I'd be happy to answer any questions about this project or [my other IndieWeb work](https://indieweb.org/User:Jmac.org).
-
-You may also wish to join the ["#whim" channel on Freenode IRC](http://webchat.freenode.net/?channels=%23whim), where I am likely idling but listening as `jmac`.
+I'd be happy to answer any questions about this project or [via email](mailto:jmac@jmac.org). You may also wish to join the ["#whim" channel on Freenode IRC](http://webchat.freenode.net/?channels=%23whim), where I am likely idling but listening as `jmac`.
 
 ## Installing Whim
 
@@ -39,7 +35,7 @@ You need the following stuff already installed to run Whim:
 
 ### Installing Whim via CPAN
 
-_Watch this space..._ Alas, you have to install Whim via source, for now, as described below.
+    $ cpanm Whim
 
 ### Installing Whim from source
 

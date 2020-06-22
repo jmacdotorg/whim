@@ -81,7 +81,7 @@
          "web" : "https://github.com/jmacdotorg/whim"
       }
    },
-   "version" : "1.2020.06.22.0",
+   "version" : "1.2020.06.22.1",
    "x_authority" : "cpan:JMAC",
    "x_contributors" : [
       "Brian Wisti <brianwisti@pobox.com>"

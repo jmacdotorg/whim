@@ -48,17 +48,13 @@ A simple webserver to display webmention-powered comment sections as HTML, suita
 
 I<This software is very young>, with present-but-incomplete documentation and inflexible configuration. It is I<absolutely> full of not just bugs but questionable design decisions that I have yet to acknowledge and address.
 
-I began this project in the spring of 2020, and hope to continue improving it over the course of the year. L<See the project's Issues tracker for ongoing status updates.|https://github.com/jmacdotorg/whim/milestone/1>
+I began this project in the spring of 2020, and hope to continue improving it over the course of the year. L<See the project's Issues tracker for ongoing status updates.|https://github.com/jmacdotorg/whim/issues>
 
-=head3 Mature alternatives
-
-B<If you want to start receiving webmentions right now>, please check out Aaron Parecki's most excellent L<Webmention.io|https://webmention.io>, a free hosted service that you can start using right away, with any web page. (It is also an open-source project.)
+If you'd like to explore more mature alternatives than Whim for working with Webmention, please see L<the author's Webmention resource page|https://jmac.org/webmention>.
 
 =head3 Contact and support
 
-B<If you are still curious about Whim>, by all means check it out and L<give me a holler|mailto:jmac@jmac.org> if you'd like. I'd be happy to answer any questions about this project or L<my other IndieWeb work|https://indieweb.org/User:Jmac.org>.
-
-You may also wish to join the L<"#whim" channel on Freenode IRC|http://webchat.freenode.net/?channels=%23whim>, where I am likely idling but listening as C<jmac>.
+I'd be happy to answer any questions about this project or L<via email|mailto:jmac@jmac.org>. You may also wish to join the L<"#whim" channel on Freenode IRC|http://webchat.freenode.net/?channels=%23whim>, where I am likely idling but listening as C<jmac>.
 
 
 =head2 Installing Whim
@@ -83,7 +79,7 @@ The `cpanm` command-line program. It is likely available as "cpanminus" in your 
 
 =head3 Installing Whim via CPAN
 
-I<Watch this space...> Alas, you have to install Whim via source, for now, as described below.
+ $ cpanm Whim
 
 =head3 Installing Whim from source
 
