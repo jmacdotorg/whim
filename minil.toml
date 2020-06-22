@@ -1,5 +1,5 @@
 name = "Whim"
-# badges = ["travis-ci.com"]
+badges = ["travis-ci.com"]
 authority="cpan:JMAC"
 
 module_maker="ExtUtilsMakeMaker"
