@@ -40,9 +40,6 @@ sub startup {
         }
     );
 
-    # ...and then force it to create its homedir, if it needs to
-    $self->whim->home;
-
     # Set up docroot and template paths.
     # For both, the first place to look is the app home, and then using
     # the library directory as a fallback.

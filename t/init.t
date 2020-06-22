@@ -19,6 +19,10 @@ BEGIN {
 
 my $t = Test::Mojo->new('Whim');
 
+# Force the whim helper object to instantiate itself, just so it creates
+# its home directory.
+$t->app->whim;
+
 ok( $whim_home->child('data')->is_dir );
 ok( $whim_home->child('public')->is_dir );
 ok( $whim_home->child('public')->child('author_photos')->is_dir );
