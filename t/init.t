@@ -1,8 +1,6 @@
 use Test::More;
 use Test::Mojo;
-use Whim::Core;
 use FindBin;
-use Mojo::File qw(path);
 
 use Path::Tiny;
 
