@@ -340,12 +340,13 @@ sub _initialize_database( $dbh ) {
 }
 
 sub _make_homedir ( $self, $dir ) {
-    unless ( $dir->exists ) {
-        $dir->mkpath;
-        $dir->child('log')->mkpath;
-        $self->data_directory->mkpath;
-        $self->author_photo_directory->mkpath;
-    }
+
+    # Path::Tiny's mkpath() method executes without complaint if the path
+    # already exists, so let's just create-if-needed every expected subdir.
+    $dir->mkpath;
+    $dir->child('log')->mkpath;
+    $self->data_directory->mkpath;
+    $self->author_photo_directory->mkpath;
 }
 
 1;

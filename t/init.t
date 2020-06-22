@@ -17,17 +17,28 @@ BEGIN {
     $ENV{WHIM_HOME} = "$whim_home";
 }
 
-my $t = Test::Mojo->new('Whim');
+# Test with no homedir at all
+check_dirs();
 
-# Force the whim helper object to instantiate itself, just so it creates
-# its home directory.
-$t->app->whim;
-
-ok( $whim_home->child('data')->is_dir );
-ok( $whim_home->child('public')->is_dir );
-ok( $whim_home->child('public')->child('author_photos')->is_dir );
-ok( $whim_home->child('log')->is_dir );
-
-$whim_home->remove_tree;
+# Test with a partially present homedir
+$whim_home->mkpath;
+check_dirs();
 
 done_testing();
+
+sub check_dirs {
+    my $t = Test::Mojo->new('Whim');
+
+    # Force the whim helper object to instantiate itself, just so it sets up
+    # its home directory.
+    $t->app->whim;
+
+    ok( $whim_home->child('data')->is_dir );
+    ok( $whim_home->child('public')->is_dir );
+    ok( $whim_home->child('public')->child('author_photos')->is_dir );
+    ok( $whim_home->child('log')->is_dir );
+
+    # And then clean everything up again.
+    $whim_home->remove_tree;
+}
+
