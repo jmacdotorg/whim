@@ -31,7 +31,19 @@ sub display {
 
     $self->stash->{webmentions}      = \%webmentions;
     $self->stash->{webmention_count} = scalar @webmentions;
-    $self->render('webmentions');
+
+    # Use the template 'webmentions', unless a 't' value is provided, in which
+    # case use that (after a simple taint check)
+    my $template_name = $self->param('t') // 'webmentions';
+    if ( $template_name =~ /[^\-\w\d]/ ) {
+        $self->render(
+            status => $BAD_REQUEST,
+            text   => 'Invalid template name.',
+        );
+        return;
+    }
+
+    $self->render($template_name);
 }
 
 1;
