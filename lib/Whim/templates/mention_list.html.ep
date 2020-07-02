@@ -1,4 +1,4 @@
-% if ($webmentions->{$type} ) {
+% if ($webmentions->{$type}->@* ) {
 %     for my $wm ( $webmentions->{$type}->@* ) {
     <div class="media">
         <div class="media-left">
