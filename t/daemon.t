@@ -42,15 +42,9 @@ $t->app->whim->process_webmentions;
 $t->get_ok('/display_wms?url=http://example.com/like-target')->status_is(200)
     ->content_like(qr/Alice Nobody/);
 
-# Check alternate templates too
-$t->get_ok('/display_wms?url=http://example.com/like-target&t=it_worked')
-    ->status_is(200)->content_like(qr/It worked!/);
-
-$t->get_ok('/display_wms?url=http://example.com/like-target&t=no_template')
-    ->status_is(404);
-
-$t->get_ok('/display_wms?url=http://example.com/like-target&t=/etc/passwd')
-    ->status_is(400);
+# Check the default summary view too.
+$t->get_ok('/summarize_wms?url=http://example.com/like-target')
+    ->status_is(200)->content_like(qr/like.png/);
 
 done_testing();
 

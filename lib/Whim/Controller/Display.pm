@@ -3,11 +3,25 @@ use Mojo::Base 'Mojolicious::Controller';
 use Whim::Mention;
 
 use Readonly;
-Readonly my $OK          => 200;
-Readonly my $ACCEPTED    => 202;
 Readonly my $BAD_REQUEST => 400;
 
 sub display {
+    my $self = shift;
+
+    return unless $self->_get_wms;
+
+    $self->render('webmentions');
+}
+
+sub summarize {
+    my $self = shift;
+
+    return unless $self->_get_wms;
+
+    $self->render('summary');
+}
+
+sub _get_wms {
     my $self = shift;
 
     my $url = $self->param('url');
@@ -24,26 +38,24 @@ sub display {
     my @webmentions = $self->whim->fetch_webmentions( { target => $url } );
 
     my %webmentions;
+
+    # Initialize %webmentions with an empty list for each webmention type that
+    # Web::Mention supports (plus one or two extras, perhaps)
+    foreach (qw( mention reply like repost quotation rsvp bookmark )) {
+        $webmentions{$_} = [];
+    }
+
     for my $wm (@webmentions) {
-        $webmentions{ $wm->type } //= [];
+        unless ( $webmentions{ $wm->type } ) {
+            die "Unknown webmention type: " . $wm->type;
+        }
         push $webmentions{ $wm->type }->@*, $wm;
     }
 
     $self->stash->{webmentions}      = \%webmentions;
     $self->stash->{webmention_count} = scalar @webmentions;
 
-    # Use the template 'webmentions', unless a 't' value is provided, in which
-    # case use that (after a simple taint check)
-    my $template_name = $self->param('t') // 'webmentions';
-    if ( $template_name =~ /[^\-\w\d]/ ) {
-        $self->render(
-            status => $BAD_REQUEST,
-            text   => 'Invalid template name.',
-        );
-        return;
-    }
-
-    $self->render($template_name);
+    return 1;
 }
 
 1;

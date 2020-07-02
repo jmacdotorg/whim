@@ -62,6 +62,7 @@ sub startup {
     $r->post('/')->to('listen#receive');
 
     $r->get('/display_wms')->to('display#display');
+    $r->get('/summarize_wms')->to('display#summarize');
 
     # Mojolicious's 'Unknown command' error message is confusing, so
     # we do our own check for command-knownness.
