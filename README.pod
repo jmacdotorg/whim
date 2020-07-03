@@ -190,3 +190,21 @@ Brian Wisti
 This software is Copyright (c) 2020 by Jason McIntosh.
 
 This is free software, licensed under the MIT License.
+
+This repository contains copies of artwork made available through a Creative Commons Attribution ("CC-BY") license:
+
+=over
+
+=item *
+
+"bookmark" by Agni from the Noun Project
+
+=item *
+
+"like" by Acharyas from the Noun Project
+
+=item *
+
+"repost" by aditvest from the Noun Project
+
+=back
