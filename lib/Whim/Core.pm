@@ -299,6 +299,7 @@ sub receive_webmention ( $self, $wm ) {
             $wm->target->as_string,
             $wm->time_received->iso8601,
             0,
+            0,
         );
     }
 }
