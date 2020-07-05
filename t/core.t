@@ -30,21 +30,12 @@ my $whim = Whim::Core->new(
 }
 
 {
-    diag("Webmention receipt (no tests)");
-    my $wm_file = path("$FindBin::Bin/source/many_wms.html");
+    diag("Receive and verify new webmentions");
 
-    my @wms = Web::Mention->new_from_html(
-        source => 'file://' . $wm_file->absolute,
-        html   => $wm_file->slurp,
-    );
+    path("$FindBin::Bin/source/many_wms.html")
+        ->copy("$FindBin::Bin/source/test_wms.html");
 
-    for my $wm (@wms) {
-        $whim->receive_webmention($wm);
-    }
-}
-
-{
-    diag("Webmention verification");
+    receive_webmentions();
     my $count = $whim->process_webmentions;
     is( $count->[0], 7, "Processed expected number of stored webmentions." );
 
@@ -55,7 +46,28 @@ my $whim = Whim::Core->new(
     my ($wm) = $whim->fetch_webmentions(
         { target => 'http://example.com/another-reply-target' } );
     is( length $wm->author_photo_hash, 64, 'Author photo hash has a value.' );
+}
 
+{
+    diag("Re-receive and re-verify existing webmentions");
+
+    receive_webmentions();
+
+    my $count = $whim->fetch_webmentions( {} );
+    is( $count, 7, "Expected number of still-verified webmentions found" );
+
+    # Swap out the file that generated the webmentions for another file with
+    # one of the links missing. This could cause one of the wms to fail
+    # verification.
+    path("$FindBin::Bin/source/many_wms_minus_one.html")
+        ->copy("$FindBin::Bin/source/test_wms.html");
+
+    $count = $whim->process_webmentions;
+    is( $count->[0], 6, "Processed expected number of stored webmentions." );
+
+    $count = $whim->fetch_webmentions( {} );
+    is( $count, 6,
+        'A webmention failed re-verification and is marked as such' );
 }
 
 {
@@ -86,4 +98,18 @@ sub initialize_tests {
         mkdir "$FindBin::Bin/public/author_photos";
     }
 
+}
+
+sub receive_webmentions {
+    diag("Webmention receipt (no tests)");
+    my $wm_file = path("$FindBin::Bin/source/test_wms.html");
+
+    my @wms = Web::Mention->new_from_html(
+        source => 'file://' . $wm_file->absolute,
+        html   => $wm_file->slurp,
+    );
+
+    for my $wm (@wms) {
+        $whim->receive_webmention($wm);
+    }
 }

@@ -224,8 +224,17 @@ sub process_webmentions( $self ) {
             . 'type = ?, original_source = ?, content = ?, title = ? '
             . 'where source = ? and target = ? and time_received = ?' );
 
-    for my $wm ( $self->fetch_webmentions( { process => 1 } ) ) {
+    for my $stored_wm ( $self->fetch_webmentions( { process => 1 } ) ) {
         $total_count++;
+
+        # Verify a new, minimal wm based on the stored one.
+        # This allows us to update re-sent wms that might have new content
+        # (or might be deleted, or otherwise no longer valid).
+        my $wm = Whim::Mention->new(
+            {   source => $stored_wm->source,
+                target => $stored_wm->target,
+            }
+        );
 
         # Grab the author image
         if ( $wm->author && $wm->author->photo ) {
@@ -265,21 +274,36 @@ sub process_webmentions( $self ) {
     return [ $verified_count, $total_count ];
 }
 
-# Receive_webmention: Treat the given wm as just-received, untested, unverified.
-#                     Store its minimal info in the database. The expectation
-#                     is that we'll process it later (see process_webmentions).
 sub receive_webmention ( $self, $wm ) {
-    $self->dbh->do(
-        'insert into wm '
-            . '(source, target, time_received, is_tested ) '
-            . 'values (?, ?, ?, ? )',
-        {},
-        $wm->source->as_string,
-        $wm->target->as_string,
-        $wm->time_received->iso8601,
-        0,
-        0,
+
+    # If a wm with this source+target already exists in the db, then set it
+    # to be re-verified, but don't modify its present verification state.
+    # Otherwise, store a new wm, unverified and untested.
+    my ($existing_wm) = $self->fetch_webmentions(
+        {   source => [ $wm->source->as_string ],
+            target => $wm->target->as_string,
+        }
     );
+    if ($existing_wm) {
+        $self->dbh->do(
+            'update wm set is_tested = 0 where source = ? and target = ?',
+            {},
+            $wm->source->as_string,
+            $wm->target->as_string,
+        );
+    }
+    else {
+        $self->dbh->do(
+            'insert into wm '
+                . '(source, target, time_received, is_tested ) '
+                . 'values (?, ?, ?, ? )',
+            {},
+            $wm->source->as_string,
+            $wm->target->as_string,
+            $wm->time_received->iso8601,
+            0,
+        );
+    }
 }
 
 sub _build_dbh( $self ) {
