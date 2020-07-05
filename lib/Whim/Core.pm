@@ -244,8 +244,8 @@ sub process_webmentions( $self ) {
             $wm->author_photo_hash,
             $wm->type,
             $wm->original_source->as_string,
-            $wm->content,
-            $wm->title,
+            $wm->source_html ? $wm->content : undef,
+            $wm->source_html ? $wm->title   : undef,
             $wm->source->as_string,
             $wm->target->as_string,
             $wm->time_received->iso8601,
@@ -256,9 +256,6 @@ sub process_webmentions( $self ) {
             $sth->execute( 1, @bind_values );
         }
         else {
-            warn "FAILED to verify s:"
-                . $wm->source->as_string . "t: "
-                . $wm->target->as_string;
             $sth->execute( 0, @bind_values );
         }
     }
