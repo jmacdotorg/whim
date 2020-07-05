@@ -231,8 +231,9 @@ sub process_webmentions( $self ) {
         # This allows us to update re-sent wms that might have new content
         # (or might be deleted, or otherwise no longer valid).
         my $wm = Whim::Mention->new(
-            {   source => $stored_wm->source,
-                target => $stored_wm->target,
+            {   source        => $stored_wm->source,
+                target        => $stored_wm->target,
+                time_received => $stored_wm->time_received,
             }
         );
 
