@@ -79,7 +79,7 @@ For more complete documentation, run `man whim`.
 
 ## Displaying webmentions
 
-Besides listening for incoming webmentions, the `listen` command also sets up an HTTP endpont at `/display_wms`. It accepts GET requests that contain one query-string argument, `url`. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
+Besides listening for incoming webmentions, the `listen` command also sets up HTTP endpoints at `/display_wms` and `/summarize_wms`. They accept GET requests that contain one query-string argument, `url`. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
 
 For example:
 
@@ -108,3 +108,9 @@ Contributors include:
 This software is Copyright (c) 2020 by Jason McIntosh.
 
 This is free software, licensed under the MIT License.
+
+This repository contains copies of artwork made available through a Creative Commons Attribution ("CC-BY") license:
+
+- "bookmark" by Agni from the Noun Project
+- "like" by Acharyas from the Noun Project
+- "repost" by aditvest from the Noun Project
