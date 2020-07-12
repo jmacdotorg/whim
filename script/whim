@@ -114,12 +114,18 @@ unless you remove the relevant blocks from its blocklist.
          start
     whim listen stop
 
-Runs a daemon that listens for webmentions. By default, it listens on
-port 3000, but you can adjust this with command-line options. See C<whim
-help listen> for a more complete list of options available.
+Runs a daemon that listens for webmentions, and also displays stored
+webmentions on request.
+
+By default, the daemon listens on port 3000, but you can adjust this
+with command-line options. See C<whim help listen> for a more complete
+list of options available.
 
 Its required final argument is a typical daemon-control directive:
-start, stop, restart, or status.
+start, stop, restart, or status. Whim's listener daemon will log to
+C<log/listen.log> within Whim's home directory.
+
+=head3 Storing webmentions
 
 The listener will automatically store all received well-formed
 webmentions in its database, but will not process them. You must call
@@ -131,18 +137,22 @@ The listener will respond to GET requests at the path C</> with a simple
 message that it's up and running. (Actual webmentions arrive via POST at
 C</>.)
 
-Furthermore, the listener sets up a GET endpoint at C</display_wms> that
-will return HTML representations of webmentions whose source matches the
-value of a given C<url> query-string argument. For example:
+=head3 Displaying webmentions
+
+Furthermore, the listener sets up GET endpoints at C</display_wms> and
+C</summarize_wms> that will return HTML representations of webmentions
+whose source matches the value of a given C<url> query-string argument.
+These two endpoints return a detailed list of webmentions akin to a
+comments section, and a very small numeric summary of reactions
+received, respectively.
+
+For example:
 
     https://my-site.example:3000/display_wms?url=http://source.example
 
 Whim has its own default templates for displaying webmentions like this.
 You can override them in whole or in part with custom template files, as
 described in L<"Templates">, below.
-
-Whim's listener daemon will log to C<log/listen.log> within Whim's home
-directory.
 
 =head2 query
 

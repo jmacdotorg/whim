@@ -1,0 +1,11 @@
+% if ($webmention_count) {
+%   if (my $count = $webmentions->{like}->@*) {
+<img src="<%= url_with->to_abs->path('images/like.png') %>" style="max-height: 1.5ex; margin:0 0.20em; 0 0.20em;" /><%= $count %>
+%   }
+%   if (my $count = $webmentions->{repost}->@*) {
+<img src="<%= url_with->to_abs->path('images/repost.png') %>" style="max-height: 1.5ex; margin:0 0.20em; 0 0.20em;" /><%= $count %>
+%   }
+%   if (my $count = $webmention_count - $webmentions->{like}->@* - $webmentions->{repost}->@*) {
+<img src="<%= url_with->to_abs->path('images/summary-comment.png') %>" style="max-height: 1.5ex; margin:0 0.20em; 0 0.20em;" /><%= $count %>
+%   }
+% }

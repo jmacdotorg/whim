@@ -139,7 +139,7 @@ For more complete documentation, run C<man whim>.
 
 =head2 Displaying webmentions
 
-Besides listening for incoming webmentions, the C<listen> command also sets up an HTTP endpont at C</display_wms>. It accepts GET requests that contain one query-string argument, C<url>. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
+Besides listening for incoming webmentions, the C<listen> command also sets up HTTP endpoints at C</display_wms> and C</summarize_wms>. They accept GET requests that contain one query-string argument, C<url>. Whim will fetch and display, as HTML, all verified webmentions whose source matches the given URL.
 
 For example:
 
@@ -190,3 +190,21 @@ Brian Wisti
 This software is Copyright (c) 2020 by Jason McIntosh.
 
 This is free software, licensed under the MIT License.
+
+This repository contains copies of artwork made available through a Creative Commons Attribution ("CC-BY") license:
+
+=over
+
+=item *
+
+"bookmark" by Agni from the Noun Project
+
+=item *
+
+"like" by Acharyas from the Noun Project
+
+=item *
+
+"repost" by aditvest from the Noun Project
+
+=back

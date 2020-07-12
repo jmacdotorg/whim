@@ -42,6 +42,10 @@ $t->app->whim->process_webmentions;
 $t->get_ok('/display_wms?url=http://example.com/like-target')->status_is(200)
     ->content_like(qr/Alice Nobody/);
 
+# Check the default summary view too.
+$t->get_ok('/summarize_wms?url=http://example.com/like-target')
+    ->status_is(200)->content_like(qr/like.png/);
+
 done_testing();
 
 sub set_up_app {
