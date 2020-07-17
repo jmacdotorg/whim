@@ -179,7 +179,7 @@ blocklist.
     http://target.example/path/to/another/page
 
     # Try to send many webmentions
-    whim send http://source.example/pah/to/page
+    whim send http://source.example/path/to/page
 
 Try to send webmentions, based on the one or two URLs given as
 arguments. It prints a short description of what it did to standard
