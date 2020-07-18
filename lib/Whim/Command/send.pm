@@ -7,6 +7,8 @@ no warnings qw(experimental::signatures);
 use Whim::Mention;
 use Try::Tiny;
 
+use Mojo::Util qw(getopt);
+
 has description => 'Send webmentions';
 has usage       => sub { shift->extract_usage };
 
@@ -17,11 +19,15 @@ sub run {
 
     $target = check_argument( target => $target ) if defined $target;
 
+    my $limit_to_entry = 0;
+    getopt \@args,
+        'e|entry' => sub { $limit_to_entry = 1 };
+
     if ( defined $target ) {
         return $self->_send_one_wm( $source, $target );
     }
     else {
-        return $self->_send_many_wms($source);
+        return $self->_send_many_wms($source, $limit_to_entry);
     }
 }
 
@@ -39,11 +45,14 @@ sub _send_one_wm ( $self, $source, $target ) {
     }
 }
 
-sub _send_many_wms ( $self, $source ) {
+sub _send_many_wms ( $self, $source, $limit_to_entry ) {
 
     my @wms;
     try {
-        @wms = Whim::Mention->new_from_source($source);
+        @wms = Whim::Mention->new_from_source(
+            $source,
+            limit_to_entry => 1,
+        );
     }
     catch {
         chomp;
@@ -88,7 +97,7 @@ Whim::Command::send - Send command
 
 =head1 SYNOPSIS
 
-  Usage: whim send [source-url] [target-url]
+  Usage: whim send [OPTIONS] [source-url] [target-url]
 
   Run with two arguments to send a single webmention with the given
   source and target URLs.
@@ -102,8 +111,7 @@ This command sends webmentions, as described above. It prints a short
 description of what it did to standard output.
 
 If called with one argument, it will attempt to load the content from
-the given source URL, locate an C<h-entry> microformat with an
-C<e-content> property, and then try to send webmentions to all linked
+the given source URL, and then try to send webmentions to all linked
 URLs found within.
 
 =head1 SEE ALSO

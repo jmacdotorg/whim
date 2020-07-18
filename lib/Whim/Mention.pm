@@ -21,25 +21,30 @@ class_has 'mf2_parser' => (
 );
 
 sub new_from_source {
-    my ( $class, $source ) = @_;
+    my ( $class, $source, %options ) = @_;
 
     my $response = $class->ua->get($source);
 
     if ( $response->is_success ) {
-        my $mf2_doc = $class->mf2_parser->parse( $response->content,
-            ( url_context => $source ) );
-        my $entry   = $mf2_doc->get_first('entry');
-        my $content = $entry->get_property('content') if $entry;
-        if ($content) {
-            return $class->new_from_html(
-                source => $source,
-                html   => $content->{html}
-            );
+        my $html;
+        if ($options{limit_to_entry}) {
+            my $mf2_doc = $class->mf2_parser->parse( $response->content,
+                ( url_context => $source ) );
+            my $entry   = $mf2_doc->get_first('entry');
+            if ($entry) {
+                $html = $entry->{html};
+            }
+            else {
+                die "Content at $source lacks an h-entry microformat.\n";
+            }
         }
         else {
-            die
-                "Content at $source lacks an h-entry microformat with an e-content property.\n";
+            $html = $response->content;
         }
+        return $class->new_from_html(
+            source => $source,
+            html   => $html,
+        );
     }
     else {
         die "Could not fetch content from $source: "
