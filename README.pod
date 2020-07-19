@@ -177,6 +177,10 @@ Contributors include:
 
 =item *
 
+Yanick Champoux
+
+=item *
+
 Adam Herzog
 
 =item *

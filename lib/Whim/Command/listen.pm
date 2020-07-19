@@ -10,7 +10,6 @@ use Mojo::Util qw(getopt);
 use Daemon::Control;
 
 use Mojo::Server::Prefork;
-my %options;
 
 sub run {
     my ( $self, @args ) = @_;
