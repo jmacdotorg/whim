@@ -27,10 +27,10 @@ sub new_from_source {
 
     if ( $response->is_success ) {
         my $html;
-        if ($options{limit_to_entry}) {
+        if ( $options{limit_to_entry} ) {
             my $mf2_doc = $class->mf2_parser->parse( $response->content,
                 ( url_context => $source ) );
-            my $entry   = $mf2_doc->get_first('entry');
+            my $entry = $mf2_doc->get_first('entry');
             if ($entry) {
                 $html = $entry->{html};
             }

@@ -16,12 +16,9 @@ sub run {
     my ( $self, @args ) = @_;
 
     my $limit_to_entry = 0;
-    getopt (
-        \@args,
-        'e|entry' => sub { $limit_to_entry = 1 },
-    );
+    getopt( \@args, 'e|entry' => sub { $limit_to_entry = 1 }, );
 
-    my ($source, $target) = @args;
+    my ( $source, $target ) = @args;
 
     warn "I have $source and $target with $limit_to_entry.";
 
@@ -33,7 +30,7 @@ sub run {
         return $self->_send_one_wm( $source, $target );
     }
     else {
-        return $self->_send_many_wms($source, $limit_to_entry);
+        return $self->_send_many_wms( $source, $limit_to_entry );
     }
 }
 
@@ -55,10 +52,8 @@ sub _send_many_wms ( $self, $source, $limit_to_entry ) {
 
     my @wms;
     try {
-        @wms = Whim::Mention->new_from_source(
-            $source,
-            limit_to_entry => $limit_to_entry,
-        );
+        @wms = Whim::Mention->new_from_source( $source,
+            limit_to_entry => $limit_to_entry, );
     }
     catch {
         chomp;
