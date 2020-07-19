@@ -13,15 +13,21 @@ has description => 'Send webmentions';
 has usage       => sub { shift->extract_usage };
 
 sub run {
-    my ( $self, $source, $target ) = @_;
+    my ( $self, @args ) = @_;
+
+    my $limit_to_entry = 0;
+    getopt (
+        \@args,
+        'e|entry' => sub { $limit_to_entry = 1 },
+    );
+
+    my ($source, $target) = @args;
+
+    warn "I have $source and $target with $limit_to_entry.";
 
     $source = check_argument( source => $source );
 
     $target = check_argument( target => $target ) if defined $target;
-
-    my $limit_to_entry = 0;
-    getopt \@args,
-        'e|entry' => sub { $limit_to_entry = 1 };
 
     if ( defined $target ) {
         return $self->_send_one_wm( $source, $target );
@@ -51,7 +57,7 @@ sub _send_many_wms ( $self, $source, $limit_to_entry ) {
     try {
         @wms = Whim::Mention->new_from_source(
             $source,
-            limit_to_entry => 1,
+            limit_to_entry => $limit_to_entry,
         );
     }
     catch {
@@ -61,6 +67,7 @@ sub _send_many_wms ( $self, $source, $limit_to_entry ) {
 
     my $success_count = 0;
     for my $wm (@wms) {
+        warn "Trying " . $wm->target;
         if ( $wm->send ) {
             $success_count++;
         }
@@ -98,6 +105,17 @@ Whim::Command::send - Send command
 =head1 SYNOPSIS
 
   Usage: whim send [OPTIONS] [source-url] [target-url]
+
+  Examples:
+    whim send https://example.com/source https://example.com/target
+    whim send https://example.com/source
+    whim send --entry https://example.com/source
+
+  Options:
+    -e, --entry                          When run in one-argument mode,
+                                         send webmentions only to targets
+                                         within the page's first h-entry
+
 
   Run with two arguments to send a single webmention with the given
   source and target URLs.
