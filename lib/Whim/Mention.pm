@@ -27,15 +27,17 @@ sub new_from_source {
 
     if ( $response->is_success ) {
         my $html;
-        if ( $options{limit_to_entry} ) {
+        if ( $options{limit_to_content} ) {
             my $mf2_doc = $class->mf2_parser->parse( $response->content,
                 ( url_context => $source ) );
-            my $entry = $mf2_doc->get_first('entry');
-            if ($entry) {
-                $html = $entry->{html};
+            my $entry   = $mf2_doc->get_first('entry');
+            my $content = $entry->get_property('content') if $entry;
+            if ($content) {
+                $html = $content->{html} // '';
             }
             else {
-                die "Content at $source lacks an h-entry microformat.\n";
+                die "Content at $source lacks an h-entry microformat "
+                    . "with an e-content property.\n";
             }
         }
         else {

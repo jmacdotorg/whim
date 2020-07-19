@@ -15,8 +15,8 @@ has usage       => sub { shift->extract_usage };
 sub run {
     my ( $self, @args ) = @_;
 
-    my $limit_to_entry = 0;
-    getopt( \@args, 'e|entry' => sub { $limit_to_entry = 1 }, );
+    my $limit_to_content = 0;
+    getopt( \@args, 'c|content' => sub { $limit_to_content = 1 }, );
 
     my ( $source, $target ) = @args;
 
@@ -28,7 +28,7 @@ sub run {
         return $self->_send_one_wm( $source, $target );
     }
     else {
-        return $self->_send_many_wms( $source, $limit_to_entry );
+        return $self->_send_many_wms( $source, $limit_to_content );
     }
 }
 
@@ -46,12 +46,12 @@ sub _send_one_wm ( $self, $source, $target ) {
     }
 }
 
-sub _send_many_wms ( $self, $source, $limit_to_entry ) {
+sub _send_many_wms ( $self, $source, $limit_to_content ) {
 
     my @wms;
     try {
         @wms = Whim::Mention->new_from_source( $source,
-            limit_to_entry => $limit_to_entry, );
+            limit_to_content => $limit_to_content, );
     }
     catch {
         chomp;
@@ -59,8 +59,11 @@ sub _send_many_wms ( $self, $source, $limit_to_entry ) {
     };
 
     my $success_count = 0;
+    if (@wms) {
+        say "Attempting to send webmentions to...";
+    }
     for my $wm (@wms) {
-        warn "Trying " . $wm->target;
+        say $wm->target;
         if ( $wm->send ) {
             $success_count++;
         }
@@ -102,12 +105,13 @@ Whim::Command::send - Send command
   Examples:
     whim send https://example.com/source https://example.com/target
     whim send https://example.com/source
-    whim send --entry https://example.com/source
+    whim send --content https://example.com/source
 
   Options:
-    -e, --entry                          When run in one-argument mode,
+    -c, --content                        When run in one-argument mode,
                                          send webmentions only to targets
                                          within the page's first h-entry
+                                         with a content property
 
 
   Run with two arguments to send a single webmention with the given

@@ -14,14 +14,13 @@ Mojolicious::Commands->start_app( 'Whim', @ARGV );
 
 =head1 NAME
 
-whim - A webmention multitool
+whim - A L<Webmention|https://jmac.org/webmention/> multitool
 
 =head1 SYNOPSIS
 
 Listen for webmentions at port 3000, and store any that arrive.
-(Also, run a little webserver for displaying received webmentions as comments.)
 
- $ whim listen start
+ $ whim listen start # Also launches a webserver for displaying webmentions!
 
 Verify recently arrived webmentions
 

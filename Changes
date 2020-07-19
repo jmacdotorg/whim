@@ -2,6 +2,15 @@ Revision history for Perl extension Whim
 
 {{$NEXT}}
 
+1.2020.07.19.1 2020-07-19T15:46:13Z
+
+    - `whim send` now keeps you appraised of its activity and progress
+    when run in single-argument mode.
+
+    - Removing the ill-considered and untested `--entry` option for
+    `whim send` and replacing with with a not-untested and
+    less-ill-considered `--content` one.
+
 1.2020.07.19.0 2020-07-19T14:07:01Z
 
     - The one-argument form of the `whim send` command will now attempt

@@ -19,14 +19,21 @@ use Path::Tiny;
     my @wms =
         Whim::Mention->new_from_source( 'file://' . $wm_file->absolute, );
 
-    is( scalar @wms, 7, "Extracted expected webmentions from source doc." );
+    is( scalar @wms, 7,
+        "Extracted expected webmentions from entire source doc." );
+
+    @wms = Whim::Mention->new_from_source( 'file://' . $wm_file->absolute,
+        limit_to_content => 1, );
+
+    is( scalar @wms, 6,
+        "Extracted expected webmentions from limited source doc." );
 
     throws_ok(
         sub {
             my $wm_file = path("$FindBin::Bin/source/no_entry.html");
             my @wms     = Whim::Mention->new_from_source(
                 'file://' . $wm_file->absolute,
-                limit_to_entry => 1, );
+                limit_to_content => 1, );
         },
         qr/lacks an h-entry microformat/,
         "Correctly refused to extract wms from souce doc with no h-entry.",

@@ -1,5 +1,5 @@
 {
-   "abstract" : "A webmention multitool",
+   "abstract" : "A L<Webmention|https://jmac.org/webmention/> multitool",
    "author" : [
       "Jason McIntosh <jmac@jmac.org>"
    ],
@@ -81,7 +81,7 @@
          "web" : "https://github.com/jmacdotorg/whim"
       }
    },
-   "version" : "1.2020.07.19.0",
+   "version" : "1.2020.07.19.1",
    "x_authority" : "cpan:JMAC",
    "x_contributors" : [
       "Brian Wisti <brianwisti@pobox.com>",
