@@ -2,9 +2,19 @@ Revision history for Perl extension Whim
 
 {{$NEXT}}
 
+1.2020.07.19.0 2020-07-19T14:07:01Z
+
+    - The one-argument form of the `whim send` command will now attempt
+    to send webmentions at every valid target on the source document, no
+    longer limiting itself to those found within certain microformats. A
+    new command-line option allows you to instead limit it to targets
+    within the first h-entry microformat.
+
 1.2020.07.12.0 2020-07-12T17:40:10Z
 
-    - Stored webmentions now set themselves as requiring a re-check, possibly for updated (or deleted) content, on receipt of an identical copy.
+    - Stored webmentions now set themselves as requiring a re-check,
+    possibly for updated (or deleted) content, on receipt of an
+    identical copy.
 
     - Adding a `/summarize_wms` endpoint, with an associated template
     and new images.

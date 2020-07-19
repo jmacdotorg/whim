@@ -100,6 +100,7 @@ Whim's lead developer is Jason McIntosh.
 
 Contributors include:
 
+- Yanick Champoux
 - Adam Herzog
 - Brian Wisti
 

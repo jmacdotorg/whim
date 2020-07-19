@@ -81,10 +81,11 @@
          "web" : "https://github.com/jmacdotorg/whim"
       }
    },
-   "version" : "1.2020.07.12.0",
+   "version" : "1.2020.07.19.0",
    "x_authority" : "cpan:JMAC",
    "x_contributors" : [
-      "Brian Wisti <brianwisti@pobox.com>"
+      "Brian Wisti <brianwisti@pobox.com>",
+      "Yanick Champoux <yanick@babyl.ca>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27300_01",
    "x_static_install" : 1
