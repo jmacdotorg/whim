@@ -4,12 +4,10 @@
 </head>
 
 <!--
-This page is like many_wms.html, but it has no e-content microformat.
+This page is like many_wms.html, but it has no h-entry microformat.
 Trying to mass-fetch webmentions from it via Whim::Mention->new_from_source
-should throw an exception.
+with the "limit_to_entry" option enabled should throw an exception.
 -->
-
-<div class="h-entry">
 
 <p class="h-card p-author">Some links by <span class="p-name">Alice Nobody</span>.<data class="u-url" value="http://alice.example"></data><data class="u-photo" value="edith.jpg"></data></p>
 
@@ -46,5 +44,3 @@ should throw an exception.
 <p>
 Hooray!
 </p>
-
-</div> <!-- end of h-entry div -->
