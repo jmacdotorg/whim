@@ -20,8 +20,6 @@ sub run {
 
     my ( $source, $target ) = @args;
 
-    warn "I have $source and $target with $limit_to_entry.";
-
     $source = check_argument( source => $source );
 
     $target = check_argument( target => $target ) if defined $target;
