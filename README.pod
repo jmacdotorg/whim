@@ -79,7 +79,7 @@ The `cpanm` command-line program. It is likely available as "cpanminus" in your 
 
 =head3 Installing Whim via CPAN
 
- $ cpanm Whim
+ $ cpanm Whim   # Note the capital 'W'!
 
 =head3 Installing Whim from source
 
