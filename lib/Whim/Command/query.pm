@@ -19,16 +19,15 @@ sub run {
         'count', 'block',     'list',     'unblock',
     );
 
-    massage_options();
-
     $whim = $self->app->whim;
 
+    massage_options();
+
     if ( $options{unblock} ) {
-        my @failures = $whim->unblock_sources( $options{unblock}->@* );
+        my @failures = $whim->unblock_sources( $options{source}->@* );
 
         my $unchanged_count = @failures;
-        my $changed_count =
-            scalar( $options{unblock}->@* ) - $unchanged_count;
+        my $changed_count = scalar( $options{source}->@* ) - $unchanged_count;
 
         if ( $changed_count && !$unchanged_count ) {
             say "OK, block list updated.";
@@ -46,7 +45,7 @@ sub run {
         say "Current blocklist:";
         say "==================";
 
-        while ( my ($source) = $whim->blocked_sources ) {
+        for my $source ( $whim->blocked_sources ) {
             say $source;
         }
         exit;
@@ -62,13 +61,14 @@ sub run {
     }
 
     if ( $options{block} ) {
+        my $block_string = join ' or ', $options{source}->@*;
         say "Are you sure you want to "
             . ( @wms ? "unpublish all these webmentions, and " : '' )
             . "block any future webmention whose source matches "
-            . "'$options{source}'? (Y/N)";
+            . "$block_string? (Y/N)";
         my $response = <STDIN>;
         if ( $response =~ /^[Yy]/ ) {
-            $whim->block_sources( $options{sources} - @* );
+            $whim->block_sources( $options{source}->@* );
             say "OK, block list updated.";
         }
         else {
