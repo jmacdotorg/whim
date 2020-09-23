@@ -2,6 +2,14 @@ Revision history for Perl extension Whim
 
 {{$NEXT}}
 
+1.2020.09.23.0 2020-09-23T20:31:51Z
+
+    - The default summary template now uses emoji instead of tiny inline
+    images.
+
+    - Fixing various bugs with the "query" subcommand. Thanks to
+    timotimo on Freenode for pointing out these problems.
+
 1.2020.07.19.1 2020-07-19T15:46:13Z
 
     - `whim send` now keeps you appraised of its activity and progress

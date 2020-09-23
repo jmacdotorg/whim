@@ -35,7 +35,7 @@ You need the following stuff already installed to run Whim:
 
 ### Installing Whim via CPAN
 
-    $ cpanm Whim
+    $ cpanm Whim   # Note the capital 'W'!
 
 ### Installing Whim from source
 

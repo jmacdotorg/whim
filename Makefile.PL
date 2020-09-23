@@ -11,7 +11,7 @@ use ExtUtils::MakeMaker 6.64;
 my %WriteMakefileArgs = (
     NAME     => 'Whim',
     DISTNAME => 'Whim',
-    VERSION  => '1.2020.07.19.1',
+    VERSION  => '1.2020.09.23.0',
     EXE_FILES => [glob('script/*'), glob('bin/*')],
     CONFIGURE_REQUIRES => {
   "ExtUtils::MakeMaker" => "6.64"
