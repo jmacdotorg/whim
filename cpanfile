@@ -4,6 +4,7 @@ requires "Daemon::Control";
 requires "DateTime::Format::ISO8601";
 requires "Digest::SHA";
 requires "FindBin";
+requires "LWP::Protocol::https";
 requires "LWP::UserAgent";
 requires "Mojolicious";
 requires "Moo";
