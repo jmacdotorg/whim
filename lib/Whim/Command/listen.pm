@@ -50,9 +50,9 @@ sub create_listener {
     # This code is adapted from the Mojolicious::Command::prefork source.
     my $listener = Mojo::Server::Prefork->new( app => $self->app );
     getopt \@args,
-        'a|accepts=i' => sub { $listener->accepts( $_[1] ) },
-        'b|backlog=i' => sub { $listener->backlog( $_[1] ) },
-        'c|clients=i' => sub { $listener->max_clients( $_[1] ) },
+        'a|accepts=i'          => sub { $listener->accepts( $_[1] ) },
+        'b|backlog=i'          => sub { $listener->backlog( $_[1] ) },
+        'c|clients=i'          => sub { $listener->max_clients( $_[1] ) },
         'G|graceful-timeout=i' =>
         sub { $listener->graceful_timeout( $_[1] ) },
         'I|heartbeat-interval=i' =>

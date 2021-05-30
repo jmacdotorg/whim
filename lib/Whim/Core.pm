@@ -91,7 +91,7 @@ sub block_sources ( $self, @sources ) {
     }
 }
 
-sub blocked_sources( $self ) {
+sub blocked_sources ($self) {
     my @sources;
     my $sth = $self->dbh->prepare('select source from block order by source');
     $sth->execute;
@@ -214,7 +214,7 @@ sub fetch_webmentions ( $self, $args ) {
 }
 
 # process_webmentions: Verify all untested WMs.
-sub process_webmentions( $self ) {
+sub process_webmentions ($self) {
     my $verified_count = 0;
     my $total_count    = 0;
     my $sth            = $self->dbh->prepare(
@@ -305,7 +305,7 @@ sub receive_webmention ( $self, $wm ) {
     }
 }
 
-sub _build_dbh( $self ) {
+sub _build_dbh ($self) {
     my $dir                     = $self->data_directory;
     my $db_needs_initialization = 1;
     my $db_file;
@@ -327,11 +327,11 @@ sub _build_dbh( $self ) {
     return $dbh;
 }
 
-sub _build_data_directory( $self ) {
+sub _build_data_directory ($self) {
     return $self->home->child('data');
 }
 
-sub _build_author_photo_directory( $self ) {
+sub _build_author_photo_directory ($self) {
     return $self->home->child('public')->child('author_photos');
 }
 
@@ -349,7 +349,7 @@ sub _process_author_photo_tx ( $self, $response ) {
     }
 }
 
-sub _initialize_database( $dbh ) {
+sub _initialize_database ($dbh) {
     my @statements = (
         "CREATE TABLE wm (source char(128), original_source char(128), target "
             . "char(128), time_received text, is_verified int, is_tested int, "

@@ -83,7 +83,7 @@ sub get_wms {
     return @wms;
 }
 
-sub display_wms( @wms ) {
+sub display_wms (@wms) {
     for my $wm (@wms) {
         say "Type:     " . $wm->type;
         say "Received: " . $wm->time_received;
