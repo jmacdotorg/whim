@@ -23,7 +23,7 @@ If you'd like to explore more mature alternatives than Whim for working with Web
 
 ### Contact and support
 
-I'd be happy to answer any questions about this project or [via email](mailto:jmac@jmac.org). You may also wish to join the ["#whim" channel on Freenode IRC](http://webchat.freenode.net/?channels=%23whim), where I am likely idling but listening as `jmac`.
+I'd be happy to answer any questions about this project or [via email](mailto:jmac@jmac.org). You may also wish to join the `#whim` channel on [Libera Chat](https://libera.chat), where I am likely idling but listening as `jmac`.
 
 ## Installing Whim
 
