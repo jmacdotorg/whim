@@ -11,7 +11,7 @@ use ExtUtils::MakeMaker 6.64;
 my %WriteMakefileArgs = (
     NAME     => 'Whim',
     DISTNAME => 'Whim',
-    VERSION  => '1.2020.09.23.0',
+    VERSION  => '1.2021.05.30.0',
     EXE_FILES => [glob('script/*'), glob('bin/*')],
     CONFIGURE_REQUIRES => {
   "ExtUtils::MakeMaker" => "6.64"
@@ -28,6 +28,7 @@ my %WriteMakefileArgs = (
   "DateTime::Format::ISO8601" => 0,
   "Digest::SHA" => 0,
   "FindBin" => 0,
+  "LWP::Protocol::https" => 0,
   "LWP::UserAgent" => 0,
   "Mojolicious" => 0,
   "Moo" => 0,

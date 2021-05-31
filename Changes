@@ -2,6 +2,14 @@ Revision history for Perl extension Whim
 
 {{$NEXT}}
 
+1.2021.05.30.0 2021-05-31T02:00:17Z
+
+    - Adding LWP::Protocol::https as a dependency. Thanks to Poorchop
+    for the patch.
+
+    - Updating documentation to point at Libera Chat instead of
+    Freenode.
+
 1.2020.09.23.0 2020-09-23T20:31:51Z
 
     - The default summary template now uses emoji instead of tiny inline
