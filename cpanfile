@@ -6,7 +6,7 @@ requires "Digest::SHA";
 requires "FindBin";
 requires "LWP::Protocol::https";
 requires "LWP::UserAgent";
-requires "Mojolicious";
+requires "Mojolicious", ">= 8.25";
 requires "Moo";
 requires "MooX::ClassAttribute";
 requires "Path::Tiny";
