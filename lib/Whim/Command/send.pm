@@ -66,11 +66,11 @@ sub _send_many_wms ( $self, $source, $limit_to_content ) {
     }
     for my $wm (@wms) {
         if ( $wm->send ) {
-            print "✅ ";
+            print "\x{2705} ";    # check mark
             $success_count++;
         }
         else {
-            print "❌ ";
+            print "\x{274C} ";    # cross mark
         }
         say $wm->target;
     }
