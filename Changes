@@ -2,6 +2,10 @@ Revision history for Perl extension Whim
 
 {{$NEXT}}
 
+    - `whim send` now prints whether or not every target got a
+    webmention sent to it, when given only a source URL as input. Thanks
+    to timo for the patch.
+
 1.2021.05.30.0 2021-05-31T02:00:17Z
 
     - Adding LWP::Protocol::https as a dependency. Thanks to Poorchop
