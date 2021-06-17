@@ -63,9 +63,13 @@ sub _send_many_wms ( $self, $source, $limit_to_content ) {
         say "Attempting to send webmentions to...";
     }
     for my $wm (@wms) {
-        say $wm->target;
+        print $wm->target;
         if ( $wm->send ) {
+            say " sent";
             $success_count++;
+        }
+        else {
+            say " not sent";
         }
     }
 
