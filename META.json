@@ -52,7 +52,7 @@
             "FindBin" : "0",
             "LWP::Protocol::https" : "0",
             "LWP::UserAgent" : "0",
-            "Mojolicious" : "0",
+            "Mojolicious" : "8.25",
             "Moo" : "0",
             "MooX::ClassAttribute" : "0",
             "Path::Tiny" : "0",
@@ -82,12 +82,13 @@
          "web" : "https://github.com/jmacdotorg/whim"
       }
    },
-   "version" : "1.2021.05.30.0",
+   "version" : "1.2021.06.17.0",
    "x_authority" : "cpan:JMAC",
    "x_contributors" : [
       "Brian Wisti <brianwisti@pobox.com>",
       "Poorchop <Poorchop@users.noreply.github.com>",
-      "Yanick Champoux <yanick@babyl.ca>"
+      "Yanick Champoux <yanick@babyl.ca>",
+      "timo <timonator@perpetuum-immobile.de>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27300_01",
    "x_static_install" : 1

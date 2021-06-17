@@ -2,9 +2,16 @@ Revision history for Perl extension Whim
 
 {{$NEXT}}
 
+1.2021.06.17.0 2021-06-17T17:33:52Z
+
     - `whim send` now prints whether or not every target got a
     webmention sent to it, when given only a source URL as input. Thanks
-    to timo for the patch.
+    to timo for the patch (which I modified a bit for personal
+    aesthetics).
+
+    - The cpanfile now specifies a requirement of Mojo v8.25 or higher,
+    guaranteeing that that `curfile` function of Mojo::File exists.
+    Thanks to Slaven Rezić for the bug report and suggestion.
 
 1.2021.05.30.0 2021-05-31T02:00:17Z
 
