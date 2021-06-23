@@ -61,6 +61,7 @@ sub startup {
     $r->get('/')->to('listen#default');
     $r->post('/')->to('listen#receive');
 
+    $r->get('/wms')->to('display#json');
     $r->get('/display_wms')->to('display#display');
     $r->get('/summarize_wms')->to('display#summarize');
 

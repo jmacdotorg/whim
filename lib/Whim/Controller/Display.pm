@@ -1,9 +1,45 @@
 package Whim::Controller::Display;
 use Mojo::Base 'Mojolicious::Controller';
 use Whim::Mention;
+use List::Util qw/ pairmap /;
 
 use Readonly;
 Readonly my $BAD_REQUEST => 400;
+
+sub serialize_wm {
+    my $wm = shift;
+
+    my $data = $wm->TO_JSON;
+
+    # TO_JSON doesn't put all the yumminess
+    # in the hash, so I augment with the
+    # other stuff I want
+
+    if( my $author = $wm->author ) {
+        $data->{author} = {
+            map { $_ => $author->$_ } qw/ name url photo /
+        }
+    }
+
+    if( $wm->author_photo_hash ) {
+        $data->{author}{local_photo} =
+             '/author_photos/' . $wm->author_photo_hash;
+    }
+
+    return $data;
+}
+
+sub json {
+    my $self = shift;
+
+    return unless $self->_get_wms;
+
+    my %mentions = pairmap {
+        $a => [ map { serialize_wm($_) } @$b ]
+    } %{ $self->stash->{webmentions} };
+
+    $self->render( json => \%mentions );
+}
 
 sub display {
     my $self = shift;
