@@ -108,7 +108,8 @@ unless you remove the relevant blocks from its blocklist.
 
 =head2 listen
 
-    whim listen start whim listen -l http://*:8080 start
+    whim listen start 
+    whim listen -l http://*:8080 start
     whim listen -l 'https://*:3000?cert=./server.crt&key=./server.key' \
          start
     whim listen stop
