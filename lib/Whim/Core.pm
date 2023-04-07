@@ -58,7 +58,9 @@ has 'author_photo_directory' => (
 
 has 'ua' => (
     is      => 'ro',
-    default => sub { LWP::UserAgent->new },
+    default => sub {
+        LWP::UserAgent->new( agent => "Whim/$Whim::VERSION" );
+    },
 );
 
 use Readonly;
